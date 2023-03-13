@@ -10,8 +10,17 @@ import "strings"
 import "net/http"
 import "encoding/json"
 
+type TypeName struct {
+    Name            string `json:"name"`
+}
+
+type PokeType struct {
+    Type            TypeName `json:"type"`
+}
+
 type PokeData struct{
     Name              string `json:"name"`
+    Types             []PokeType `json:"types"`
 }
 
 func searchPokemon(pokemon_id int) {
@@ -41,6 +50,9 @@ func searchPokemon(pokemon_id int) {
 		log.Println(err)
 	}
     fmt.Println(pokemon.Name)
+    for _, ptype := range pokemon.Types {
+        fmt.Println(ptype.Type.Name)
+    }
 }
 
 func main() {
