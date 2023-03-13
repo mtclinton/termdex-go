@@ -9,6 +9,7 @@ import "log"
 import "strings"
 import "net/http"
 import "encoding/json"
+import "io/ioutil"
 
 type TypeName struct {
     Name            string `json:"name"`
@@ -21,6 +22,20 @@ type PokeType struct {
 type PokeData struct{
     Name              string `json:"name"`
     Types             []PokeType `json:"types"`
+}
+
+func show_pokemon(pokemon_id int) {
+    jsonPokemon, err := os.Open("pokemon.json")
+    if err != nil {
+        log.Fatal("NewRequest: ", err)
+         return
+     }
+    defer jsonPokemon.Close()
+    byteResult, _ := ioutil.ReadAll(jsonPokemon)
+
+   var res map[string]interface{}
+   json.Unmarshal([]byte(byteResult), &res)
+    fmt.Println(res[strconv.Itoa(pokemon_id)])
 }
 
 func searchPokemon(pokemon_id int) {
@@ -49,10 +64,12 @@ func searchPokemon(pokemon_id int) {
     if err := json.NewDecoder(resp.Body).Decode(&pokemon); err != nil {
 		log.Println(err)
 	}
-    fmt.Println(pokemon.Name)
+    pokemon_types :=  []string{}
     for _, ptype := range pokemon.Types {
-        fmt.Println(ptype.Type.Name)
+        pokemon_types = append(pokemon_types, ptype.Type.Name)
     }
+    show_pokemon(pokemon_id)
+    fmt.Println(pokemon.Name)
 }
 
 func main() {
