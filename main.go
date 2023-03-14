@@ -118,13 +118,15 @@ func searchPokemon(pokemon_id int) {
 func main() {
    pokeball.ShowPokeball()
     fmt.Println("Welcome to TermDex")
-    fmt.Println("Input a pokemon ID")
-    reader := bufio.NewReader(os.Stdin)
-    userInput, _ := reader.ReadString('\n')
-    userInput = strings.ReplaceAll(userInput, "\n", "")
-    pokemon_id, err := strconv.Atoi(userInput)
-    if err != nil {
-        log.Fatal(err)
+    for {
+        fmt.Println("Input a pokemon ID")
+        reader := bufio.NewReader(os.Stdin)
+        userInput, _ := reader.ReadString('\n')
+        userInput = strings.ReplaceAll(userInput, "\n", "")
+        pokemon_id, err := strconv.Atoi(userInput)
+        if err != nil {
+            log.Fatal(err)
+        }
+        searchPokemon(pokemon_id)
     }
-    searchPokemon(pokemon_id)
 }
