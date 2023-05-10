@@ -3,9 +3,9 @@ package main
 import (
    "os"
    "sync"
-   "time"
    "log"
    "strconv"
+   "fmt"
 )
 
 var (
@@ -14,6 +14,16 @@ var (
     /// Sleep duration on empty recv()
     SLEEP_MILLIS = 100;
 )
+
+type NewPokemon struct{
+    pokemon_id int
+    name string
+    large string
+    small string
+    base_experience int
+    height int
+    weight int
+}
 
 type Scraper struct {
     wg sync.WaitGroup
@@ -30,7 +40,7 @@ func NewScraper() Scraper {
     }
 }
 
-func (s Scraper) save_pokemon(data PokemonAPIData, pid int) {
+func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
     l_path := "sprites/large/" + data.Name
     s_path := "sprites/small/" + data.Name
     l_data, err := os.ReadFile(l_path)
@@ -46,8 +56,8 @@ func (s Scraper) save_pokemon(data PokemonAPIData, pid int) {
     new_pokemon := NewPokemon {
             pokemon_id: pid,
             name: data.Name,
-            large: l_data,
-            small: s_data,
+            large: string(l_data),
+            small: string(s_data),
             base_experience: data.BaseExperience,
             height: data.Height,
             weight: data.Weight,
@@ -55,9 +65,10 @@ func (s Scraper) save_pokemon(data PokemonAPIData, pid int) {
     s.mu.Lock()
     defer s.mu.Unlock()
     s.pokemon_data = append(s.pokemon_data, new_pokemon)
+
 }
 
-func (s Scraper) handle_url(url string, pid int) {
+func (s *Scraper) handle_url(url string, pid int) {
     api_data, err := s.downloader.get(url)
     if err != nil {
         log.Print(err)
@@ -66,14 +77,14 @@ func (s Scraper) handle_url(url string, pid int) {
     s.save_pokemon(api_data, pid)
 }
 
-func (s Scraper) pokeGenerator(ch chan string) {
+func (s *Scraper) pokeGenerator(ch chan string) {
     defer close(ch)
     for i := 1; i <= 151; i++ {
         p := strconv.Itoa(i)
         ch <- p
     }
 }
-func (s Scraper) run() {
+func (s *Scraper) run() {
 
     queue := make(chan string)
 
@@ -89,10 +100,13 @@ func (s Scraper) run() {
     }
 
     s.wg.Wait()
+    for _, p := range s.pokemon_data {
+        fmt.Println(p.name)
+    }
 
 }
 
-func (s Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
+func (s *Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
    for p := range ch {
         intVar, _ := strconv.Atoi(p)
         s.handle_url("https://pokeapi.co/api/v2/pokemon/"+p, intVar)
