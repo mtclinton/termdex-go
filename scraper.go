@@ -1,7 +1,6 @@
 package main
 
 import (
-   "os"
    "sync"
    "log"
    "strconv"
@@ -41,14 +40,12 @@ func NewScraper() Scraper {
 }
 
 func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
-    l_path := "sprites/large/" + data.Name
-    s_path := "sprites/small/" + data.Name
-    l_data, err := os.ReadFile(l_path)
+    large_sprite, err := s.downloader.get_sprite("https://raw.githubusercontent.com/mtclinton/pokemon-sprites/master/large/"+data.Name)
     if err != nil {
         log.Print(err)
         return
     }
-    s_data, err := os.ReadFile(s_path)
+    small_sprite, err := s.downloader.get_sprite("https://raw.githubusercontent.com/mtclinton/pokemon-sprites/master/small/"+data.Name)
     if err != nil {
         log.Print(err)
         return
@@ -56,8 +53,8 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
     new_pokemon := NewPokemon {
             pokemon_id: pid,
             name: data.Name,
-            large: string(l_data),
-            small: string(s_data),
+            large: string(large_sprite),
+            small: string(small_sprite),
             base_experience: data.BaseExperience,
             height: data.Height,
             weight: data.Weight,
@@ -100,9 +97,6 @@ func (s *Scraper) run() {
     }
 
     s.wg.Wait()
-    for _, p := range s.pokemon_data {
-        fmt.Println(p.name)
-    }
 
 }
 
