@@ -102,7 +102,7 @@ func (s *Scraper) run() {
 	}
 
 	s.wg.Wait()
-	insertPokemon(s.pokemon_data[0])
+	insertPokemon(s.pokemon_data)
 
 }
 
@@ -114,13 +114,12 @@ func (s *Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
 	}
 }
 
-func insertPokemon(p NewPokemon) {
+func insertPokemon(pokemon_results []NewPokemon) {
 	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
 	if err != nil {
 		log.Print((err))
 	}
-	log.Print(p.Name, p.Pokemon_id)
-	result := db.Create(&p)
+	result := db.Create(&pokemon_results)
 	if result.Error != nil {
 		log.Print((err))
 	}
