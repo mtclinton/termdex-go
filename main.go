@@ -12,8 +12,7 @@ import (
 func main() {
 
 	loadDB()
-	// s := NewScraper()
-	// s.run()
+	initializePokemon()
 	displayPokemon()
 
 }
@@ -59,8 +58,24 @@ func displayPokemon() {
 	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
-	} // Defer Closing the database
+	}
 	var pokemon NewPokemon
 	db.First(&pokemon, 2) // find product with integer primary key
 	fmt.Println(pokemon.Small)
+
+}
+
+func initializePokemon() {
+	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	var count int64
+	db.Table("pokemon").Count(&count)
+	if count == 0 {
+		fmt.Println("Initializing pokemon")
+		s := NewScraper()
+		s.run()
+	}
+
 }
