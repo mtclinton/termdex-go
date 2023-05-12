@@ -2,31 +2,36 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
+	"fmt"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"log"
 	"os"
 )
 
 func main() {
 
-    loadDB()
-    s := NewScraper()
-    s.run()
+	loadDB()
+	// s := NewScraper()
+	// s.run()
+	displayPokemon()
+
 }
 
 func loadDB() {
-    if _, err := os.Stat("pokemon.db"); err != nil {
-        log.Println("Creating sqlite-database.db...")
-        file, err := os.Create("sqlite-database.db") // Create SQLite file
-        if err != nil {
-            log.Fatal(err.Error())
-        }
-        file.Close()
-        log.Println("sqlite-database.db created")
-    }
-    sqliteDatabase, _ := sql.Open("sqlite3", "./pokemon.db") // Open the created SQLite File
-    defer sqliteDatabase.Close()                             // Defer Closing the database
-    createTable(sqliteDatabase)                              // Create Database Tables 
+	if _, err := os.Stat("pokemon.db"); err != nil {
+		log.Println("Creating sqlite-database.db...")
+		file, err := os.Create("sqlite-database.db") // Create SQLite file
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		file.Close()
+		log.Println("sqlite-database.db created")
+	}
+	sqliteDatabase, _ := sql.Open("sqlite3", "./pokemon.db") // Open the created SQLite File
+	defer sqliteDatabase.Close()                             // Defer Closing the database
+	createTable(sqliteDatabase)                              // Create Database Tables
+
 }
 
 func createTable(db *sql.DB) {
@@ -48,4 +53,14 @@ func createTable(db *sql.DB) {
 	}
 	statement.Exec() // Execute SQL Statements
 	log.Println("Pokemon table created")
+}
+
+func displayPokemon() {
+	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	} // Defer Closing the database
+	var pokemon NewPokemon
+	db.First(&pokemon, 2) // find product with integer primary key
+	fmt.Println(pokemon.Small)
 }
