@@ -47,6 +47,7 @@ func main() {
 		img := widgets.NewImage(nil)
 		image_width := termWidth / 10 * 7
 		img.SetRect(0, 0, int(image_width), termHeight)
+		img.Title = currentPokemon.Name
 		img.Image = pimage
 
 		ui.Render(img)
@@ -58,7 +59,8 @@ func main() {
 		image_width := int(termWidth / 10 * 7)
 		p := widgets.NewParagraph()
 		p.Text = termPokemon.search
-		p.SetRect(image_width, 0, termWidth, 5)
+		p.Title = "Search Pokemon"
+		p.SetRect(image_width, 0, termWidth, 3)
 
 		ui.Render(p)
 	}
