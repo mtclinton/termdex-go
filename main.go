@@ -50,8 +50,20 @@ func main() {
 		img.Image = pimage
 
 		ui.Render(img)
+
 	}
 	draw()
+
+	drawInput := func() {
+		image_width := int(termWidth / 10 * 7)
+		p := widgets.NewParagraph()
+		p.Text = termPokemon.search
+		p.SetRect(image_width, 0, termWidth, 5)
+
+		ui.Render(p)
+	}
+
+	drawInput()
 
 	uiEvents := ui.PollEvents()
 
@@ -64,9 +76,11 @@ func main() {
 		case "<Enter>":
 			currentPokemon = getPokemon(termPokemon.search)
 			termPokemon.search = ""
+			drawInput()
 			draw()
 		default:
 			termPokemon.search = termPokemon.search + e.ID
+			drawInput()
 		}
 
 	}
