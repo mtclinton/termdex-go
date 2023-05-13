@@ -3,18 +3,57 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"image"
+	_ "image/png"
 	"log"
 	"os"
+	// "math"
 )
 
-func main() {
+var grid *ui.Grid
 
+func main() {
+	if err := ui.Init(); err != nil {
+		log.Fatalf("failed to initialize termui: %v", err)
+	}
+	defer ui.Close()
 	loadDB()
 	initializePokemon()
-	displayPokemon()
 
+	termWidth, termHeight := ui.TerminalDimensions()
+
+	// pokemon := displayPokemon()
+
+	reader, err := os.Open("./2.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pimage, _, err := image.Decode(reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	img := widgets.NewImage(nil)
+	image_width := termWidth / 10 * 7
+	img.SetRect(0, 0, int(image_width), termHeight)
+	img.Image = pimage
+
+	ui.Render(img)
+
+	uiEvents := ui.PollEvents()
+
+	for {
+		e := <-uiEvents
+		switch e.ID {
+		case "q", "<C-c>":
+			return
+
+		}
+	}
 }
 
 func loadDB() {
@@ -54,14 +93,14 @@ func createTable(db *sql.DB) {
 	log.Println("Pokemon table created")
 }
 
-func displayPokemon() {
+func displayPokemon() NewPokemon {
 	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
 	var pokemon NewPokemon
 	db.First(&pokemon, 2) // find product with integer primary key
-	fmt.Println(pokemon.Small)
+	return pokemon
 
 }
 
