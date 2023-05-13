@@ -11,10 +11,14 @@ import (
 	_ "image/png"
 	"log"
 	"os"
-	// "math"
+	"strconv"
 )
 
 var grid *ui.Grid
+
+type SearchPokemon struct {
+	search string
+}
 
 func main() {
 	if err := ui.Init(); err != nil {
@@ -24,25 +28,30 @@ func main() {
 	loadDB()
 	initializePokemon()
 
+	var termPokemon SearchPokemon
+	currentPokemon := getPokemon("1")
+
 	termWidth, termHeight := ui.TerminalDimensions()
 
 	// pokemon := displayPokemon()
+	draw := func() {
+		reader, err := os.Open("./sprites/" + strconv.Itoa(currentPokemon.Pokemon_id) + ".png")
+		if err != nil {
+			log.Fatal(err)
+		}
+		pimage, _, err := image.Decode(reader)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	reader, err := os.Open("./2.png")
-	if err != nil {
-		log.Fatal(err)
+		img := widgets.NewImage(nil)
+		image_width := termWidth / 10 * 7
+		img.SetRect(0, 0, int(image_width), termHeight)
+		img.Image = pimage
+
+		ui.Render(img)
 	}
-	pimage, _, err := image.Decode(reader)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img := widgets.NewImage(nil)
-	image_width := termWidth / 10 * 7
-	img.SetRect(0, 0, int(image_width), termHeight)
-	img.Image = pimage
-
-	ui.Render(img)
+	draw()
 
 	uiEvents := ui.PollEvents()
 
@@ -52,7 +61,14 @@ func main() {
 		case "q", "<C-c>":
 			return
 
+		case "<Enter>":
+			currentPokemon = getPokemon(termPokemon.search)
+			termPokemon.search = ""
+			draw()
+		default:
+			termPokemon.search = termPokemon.search + e.ID
 		}
+
 	}
 }
 
@@ -93,13 +109,17 @@ func createTable(db *sql.DB) {
 	log.Println("Pokemon table created")
 }
 
-func displayPokemon() NewPokemon {
+func getPokemon(search string) NewPokemon {
 	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
 	var pokemon NewPokemon
-	db.First(&pokemon, 2) // find product with integer primary key
+	if _, err := strconv.Atoi(search); err == nil {
+		db.Where("pokemon_id = ?", search).First(&pokemon)
+	} else {
+		db.Where("name = ?", search).First(&pokemon)
+	}
 	return pokemon
 
 }
