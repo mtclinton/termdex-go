@@ -19,8 +19,6 @@ type NewPokemon struct {
 	ID              uint `gorm:"primarykey"	`
 	Pokemon_id      int
 	Name            string
-	Large           string
-	Small           string
 	Base_experience int
 	Height          int
 	Weight          int
@@ -45,21 +43,9 @@ func NewScraper() Scraper {
 }
 
 func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
-	large_sprite, err := s.downloader.get_sprite("https://raw.githubusercontent.com/mtclinton/pokemon-sprites/master/large/" + data.Name)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	small_sprite, err := s.downloader.get_sprite("https://raw.githubusercontent.com/mtclinton/pokemon-sprites/master/small/" + data.Name)
-	if err != nil {
-		log.Print(err)
-		return
-	}
 	new_pokemon := NewPokemon{
 		Pokemon_id:      pid,
 		Name:            data.Name,
-		Large:           string(large_sprite),
-		Small:           string(small_sprite),
 		Base_experience: data.BaseExperience,
 		Height:          data.Height,
 		Weight:          data.Weight,
@@ -81,7 +67,7 @@ func (s *Scraper) handle_url(url string, pid int) {
 
 func (s *Scraper) pokeGenerator(ch chan string) {
 	defer close(ch)
-	for i := 1; i <= 15; i++ {
+	for i := 1; i <= 151; i++ {
 		p := strconv.Itoa(i)
 		ch <- p
 	}
@@ -92,7 +78,7 @@ func (s *Scraper) run() {
 
 	workers := 8
 
-	s.wg.Add(15)
+	s.wg.Add(151)
 
 	go s.pokeGenerator(queue)
 
@@ -119,6 +105,16 @@ func insertPokemon(pokemon_results []NewPokemon) {
 	if err != nil {
 		log.Print((err))
 	}
+
+    notfound := NewPokemon {
+            Pokemon_id: 0,
+            Name: "Not Found",
+            Base_experience: -1,
+            Height: -1,
+            Weight: -1,
+        }
+    pokemon_results = append(pokemon_results, notfound)
+
 	result := db.Create(&pokemon_results)
 	if result.Error != nil {
 		log.Print((err))

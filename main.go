@@ -2,11 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"image"
 	_ "image/png"
 	"log"
@@ -35,7 +37,13 @@ func main() {
 
 	// pokemon := displayPokemon()
 	draw := func() {
-		reader, err := os.Open("./sprites/" + strconv.Itoa(currentPokemon.Pokemon_id) + ".png")
+		var sprite_name string
+		if currentPokemon.Pokemon_id == 0 {
+			sprite_name = "pokedex"
+		} else {
+			sprite_name = strconv.Itoa(currentPokemon.Pokemon_id)
+		}
+		reader, err := os.Open("./sprites/" + sprite_name + ".png")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -109,8 +117,6 @@ func createTable(db *sql.DB) {
         "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
         "pokemon_id" integer NOT NULL,
         "name" TEXT NOT NULL,
-        "large" TEXT NOT NULL,
-        "small" TEXT NOT NULL,
         "base_experience" integer NOT NULL,
         "height" integer NOT NULL,
         "weight" integer NOT NULL
@@ -126,16 +132,25 @@ func createTable(db *sql.DB) {
 }
 
 func getPokemon(search string) NewPokemon {
-	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		panic("failed to connect database")
 	}
 	var pokemon NewPokemon
 	if _, err := strconv.Atoi(search); err == nil {
-		db.Where("pokemon_id = ?", search).First(&pokemon)
+		result := db.Where("pokemon_id = ?", search).First(&pokemon)
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			db.Where("name = ").First(&pokemon)
+		}
 	} else {
-		db.Where("name = ?", search).First(&pokemon)
+		result := db.Where("name = ?", search).First(&pokemon)
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			db.Where("name = ").First(&pokemon)
+		}
 	}
+
 	return pokemon
 
 }
