@@ -12,6 +12,18 @@ type PokemonAPIData struct {
 	BaseExperience int    `json:"base_experience"`
 	Height         int    `json:"height"`
 	Weight         int    `json:"weight"`
+	Stats          []Stat `json:"stats"`
+}
+
+type Stat struct {
+	BaseStat  int      `json:"base_stat"`
+	Effort    int      `json:"effort"`
+	StateName StatName `json:"stat"`
+}
+
+type StatName struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
 }
 
 // /A Downloader to download web content
@@ -43,7 +55,7 @@ func (d Downloader) make_request(url string) (PokemonAPIData, error) {
 	if readErr != nil {
 		return PokemonAPIData{}, readErr
 	}
-	
+
 	apiData := PokemonAPIData{}
 	jsonErr := json.Unmarshal(body, &apiData)
 	if jsonErr != nil {
@@ -57,7 +69,7 @@ func (d Downloader) get(url string) (PokemonAPIData, error) {
 		apiData, err := d.make_request(url)
 		if err == nil {
 			return apiData, nil
-		} 
+		}
 		if i+1 == d.tries {
 			return PokemonAPIData{}, err
 		}
@@ -89,7 +101,7 @@ func (d Downloader) get_sprite(url string) ([]byte, error) {
 		sprite_data, err := d.make_sprite_request(url)
 		if err == nil {
 			return sprite_data, nil
-		} 
+		}
 		if i+1 == d.tries {
 			return nil, err
 		}

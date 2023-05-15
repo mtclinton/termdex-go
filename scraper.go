@@ -106,14 +106,14 @@ func insertPokemon(pokemon_results []NewPokemon) {
 		log.Print((err))
 	}
 
-    notfound := NewPokemon {
-            Pokemon_id: 0,
-            Name: "Not Found",
-            Base_experience: -1,
-            Height: -1,
-            Weight: -1,
-        }
-    pokemon_results = append(pokemon_results, notfound)
+	notfound := NewPokemon{
+		Pokemon_id:      0,
+		Name:            "Not Found",
+		Base_experience: -1,
+		Height:          -1,
+		Weight:          -1,
+	}
+	pokemon_results = append(pokemon_results, notfound)
 
 	result := db.Create(&pokemon_results)
 	if result.Error != nil {
