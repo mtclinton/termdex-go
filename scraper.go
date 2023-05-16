@@ -22,6 +22,12 @@ type NewPokemon struct {
 	Base_experience int
 	Height          int
 	Weight          int
+	HP              int
+	Attack          int
+	Defense         int
+	SpecialAttack   int
+	SpecialDefense  int
+	Speed           int
 }
 
 func (NewPokemon) TableName() string {
