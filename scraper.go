@@ -49,12 +49,35 @@ func NewScraper() Scraper {
 }
 
 func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
+	var hp, attack, defense, special_attack, special_defense, speed int
+	for _, stat := range data.Stats {
+		switch stat_name := stat.StateName.Name; stat_name {
+		case "hp":
+			hp = stat.BaseStat
+		case "attack":
+			attack = stat.BaseStat
+		case "defense":
+			defense = stat.BaseStat
+		case "special-attack":
+			special_attack = stat.BaseStat
+		case "special-defense":
+			special_defense = stat.BaseStat
+		case "speed":
+			speed = stat.BaseStat
+		}
+	}
 	new_pokemon := NewPokemon{
 		Pokemon_id:      pid,
 		Name:            data.Name,
 		Base_experience: data.BaseExperience,
 		Height:          data.Height,
 		Weight:          data.Weight,
+		HP:              hp,
+		Attack:          attack,
+		Defense:         defense,
+		SpecialAttack:   special_attack,
+		SpecialDefense:  special_defense,
+		Speed:           speed,
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
