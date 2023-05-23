@@ -119,7 +119,13 @@ func createTable(db *sql.DB) {
         "name" TEXT NOT NULL,
         "base_experience" integer NOT NULL,
         "height" integer NOT NULL,
-        "weight" integer NOT NULL
+        "weight" integer NOT NULL,
+        "hp" integer NOT NULL,
+        "attack" integer NOT NULL,
+        "defense" integer NOT NULL,
+        "special_attack" integer NOT NULL,
+        "special_defense" integer NOT NULL,
+        "speed" integer NOT NULL
       );` // SQL Statement for Create Table
 
 	log.Println("Create pokemon table...")

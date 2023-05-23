@@ -25,8 +25,8 @@ type NewPokemon struct {
 	HP              int
 	Attack          int
 	Defense         int
-	SpecialAttack   int
-	SpecialDefense  int
+	Special_attack   int
+	Special_defense  int
 	Speed           int
 }
 
@@ -75,8 +75,8 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 		HP:              hp,
 		Attack:          attack,
 		Defense:         defense,
-		SpecialAttack:   special_attack,
-		SpecialDefense:  special_defense,
+		Special_attack:   special_attack,
+		Special_defense:  special_defense,
 		Speed:           speed,
 	}
 	s.mu.Lock()
