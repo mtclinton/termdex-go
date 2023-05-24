@@ -35,7 +35,6 @@ func main() {
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
-	// pokemon := displayPokemon()
 	draw := func() {
 		var sprite_name string
 		if currentPokemon.Pokemon_id == 0 {
@@ -80,7 +79,7 @@ func main() {
 	for {
 		e := <-uiEvents
 		switch e.ID {
-		case "q", "<C-c>":
+		case "<C-c>":
 			return
 
 		case "<Enter>":

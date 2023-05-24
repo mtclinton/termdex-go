@@ -138,9 +138,6 @@ func insertPokemon(pokemon_results []NewPokemon) {
 	notfound := NewPokemon{
 		Pokemon_id:      0,
 		Name:            "Not Found",
-		Base_experience: -1,
-		Height:          -1,
-		Weight:          -1,
 	}
 	pokemon_results = append(pokemon_results, notfound)
 
