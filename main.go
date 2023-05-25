@@ -70,6 +70,12 @@ func main() {
 		p.SetRect(image_width, 0, termWidth, 3)
 
 		ui.Render(p)
+
+        n := widgets.NewParagraph()
+        n.Text = currentPokemon.Name
+        n.SetRect(image_width, 5, termWidth, 8)
+
+        ui.Render(n)
 	}
 
 	drawInput()
