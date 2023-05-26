@@ -14,9 +14,13 @@ import (
 	"log"
 	"os"
 	"strconv"
+    "strings"
 )
 
 var grid *ui.Grid
+
+const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 
 type SearchPokemon struct {
 	search string
@@ -94,7 +98,9 @@ func main() {
 			drawInput()
 			draw()
 		default:
-			termPokemon.search = termPokemon.search + e.ID
+            if strings.Contains(values, e.ID) {
+                termPokemon.search = termPokemon.search + e.ID
+            }
 			drawInput()
 		}
 
