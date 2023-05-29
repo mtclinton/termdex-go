@@ -14,13 +14,12 @@ import (
 	"log"
 	"os"
 	"strconv"
-    "strings"
+	"strings"
 )
 
 var grid *ui.Grid
 
 const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 
 type SearchPokemon struct {
 	search string
@@ -75,11 +74,11 @@ func main() {
 
 		ui.Render(p)
 
-        n := widgets.NewParagraph()
-        n.Text = currentPokemon.Name
-        n.SetRect(image_width, 5, termWidth, 8)
+		n := widgets.NewParagraph()
+		n.Text = currentPokemon.Name
+		n.SetRect(image_width, 5, termWidth, 8)
 
-        ui.Render(n)
+		ui.Render(n)
 	}
 
 	drawInput()
@@ -91,6 +90,11 @@ func main() {
 		switch e.ID {
 		case "<C-c>":
 			return
+		case "<Backspace>":
+			if len(termPokemon.search) > 0 {
+				termPokemon.search = termPokemon.search[:len(termPokemon.search)-1]
+				drawInput()
+			}
 
 		case "<Enter>":
 			currentPokemon = getPokemon(termPokemon.search)
@@ -98,9 +102,9 @@ func main() {
 			drawInput()
 			draw()
 		default:
-            if strings.Contains(values, e.ID) {
-                termPokemon.search = termPokemon.search + e.ID
-            }
+			if strings.Contains(values, e.ID) {
+				termPokemon.search = termPokemon.search + e.ID
+			}
 			drawInput()
 		}
 
