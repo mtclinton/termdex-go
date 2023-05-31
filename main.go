@@ -79,6 +79,12 @@ func main() {
 		n.SetRect(image_width, 5, termWidth, 8)
 
 		ui.Render(n)
+
+        h := widgets.NewParagraph()
+        h.Text = strconv.Itoa(currentPokemon.HP)
+        h.SetRect(image_width, 10, termWidth, 13)
+
+        ui.Render(h)
 	}
 
 	drawInput()
