@@ -80,11 +80,27 @@ func main() {
 
 		ui.Render(n)
 
-        h := widgets.NewParagraph()
-        h.Text = strconv.Itoa(currentPokemon.HP)
-        h.SetRect(image_width, 10, termWidth, 13)
+        hp := widgets.NewParagraph()
+        hp.Text = strconv.Itoa(currentPokemon.HP)
+        hp.SetRect(image_width, 10, termWidth, 13)
 
-        ui.Render(h)
+        ui.Render(hp)
+
+        attack := widgets.NewParagraph()
+        attack.Text = strconv.Itoa(currentPokemon.Attack)
+        attack.SetRect(image_width, 15, termWidth, 18)
+
+        defense := widgets.NewParagraph()
+        defense.Text = strconv.Itoa(currentPokemon.Defense)
+        defense.SetRect(image_width, 20, termWidth, 23)
+
+        speed := widgets.NewParagraph()
+        speed.Text = strconv.Itoa(currentPokemon.Speed)
+        speed.SetRect(image_width, 26, termWidth, 29)
+
+        ui.Render(attack)
+        ui.Render(defense)
+        ui.Render(speed)
 	}
 
 	drawInput()
