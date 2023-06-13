@@ -101,6 +101,15 @@ func main() {
         ui.Render(attack)
         ui.Render(defense)
         ui.Render(speed)
+
+        g0 := widgets.NewGauge()
+        g0.Title = "Special Attack"
+        g0.SetRect(image_width, 32, termWidth, 42)
+        g0.Percent = currentPokemon.Special_attack
+        g0.BarColor = ui.ColorRed
+        g0.BorderStyle.Fg = ui.ColorWhite
+        g0.TitleStyle.Fg = ui.ColorCyan
+        ui.Render(g0)
 	}
 
 	drawInput()
