@@ -30,6 +30,15 @@ type NewPokemon struct {
 	Speed           int
 }
 
+type MaxStats struct {
+        HP              int
+    Attack          int
+    Defense         int
+    Special_attack   int
+    Special_defense  int
+    Speed           int
+}
+
 func (NewPokemon) TableName() string {
 	return "pokemon"
 }

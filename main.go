@@ -80,36 +80,36 @@ func main() {
 
 		ui.Render(n)
 
-        hp := widgets.NewParagraph()
-        hp.Text = strconv.Itoa(currentPokemon.HP)
-        hp.SetRect(image_width, 10, termWidth, 13)
+		hp := widgets.NewParagraph()
+		hp.Text = strconv.Itoa(currentPokemon.HP)
+		hp.SetRect(image_width, 10, termWidth, 13)
 
-        ui.Render(hp)
+		ui.Render(hp)
 
-        attack := widgets.NewParagraph()
-        attack.Text = strconv.Itoa(currentPokemon.Attack)
-        attack.SetRect(image_width, 15, termWidth, 18)
+		attack := widgets.NewParagraph()
+		attack.Text = strconv.Itoa(currentPokemon.Attack)
+		attack.SetRect(image_width, 15, termWidth, 18)
 
-        defense := widgets.NewParagraph()
-        defense.Text = strconv.Itoa(currentPokemon.Defense)
-        defense.SetRect(image_width, 20, termWidth, 23)
+		defense := widgets.NewParagraph()
+		defense.Text = strconv.Itoa(currentPokemon.Defense)
+		defense.SetRect(image_width, 20, termWidth, 23)
 
-        speed := widgets.NewParagraph()
-        speed.Text = strconv.Itoa(currentPokemon.Speed)
-        speed.SetRect(image_width, 26, termWidth, 29)
+		speed := widgets.NewParagraph()
+		speed.Text = strconv.Itoa(currentPokemon.Speed)
+		speed.SetRect(image_width, 26, termWidth, 29)
 
-        ui.Render(attack)
-        ui.Render(defense)
-        ui.Render(speed)
+		ui.Render(attack)
+		ui.Render(defense)
+		ui.Render(speed)
 
-        g0 := widgets.NewGauge()
-        g0.Title = "Special Attack"
-        g0.SetRect(image_width, 32, termWidth, 42)
-        g0.Percent = currentPokemon.Special_attack
-        g0.BarColor = ui.ColorRed
-        g0.BorderStyle.Fg = ui.ColorWhite
-        g0.TitleStyle.Fg = ui.ColorCyan
-        ui.Render(g0)
+		g0 := widgets.NewGauge()
+		g0.Title = "Special Attack"
+		g0.SetRect(image_width, 32, termWidth, 42)
+		g0.Percent = currentPokemon.Special_attack
+		g0.BarColor = ui.ColorRed
+		g0.BorderStyle.Fg = ui.ColorWhite
+		g0.TitleStyle.Fg = ui.ColorCyan
+		ui.Render(g0)
 	}
 
 	drawInput()
