@@ -49,6 +49,7 @@ type Scraper struct {
 	balance      int
 	downloader   Downloader
 	pokemon_data []NewPokemon
+    maxstats MaxStats
 }
 
 func NewScraper() Scraper {
@@ -91,6 +92,24 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.pokemon_data = append(s.pokemon_data, new_pokemon)
+    if hp > maxstats.HP {
+        maxstats.HP = hp
+    }
+    if attack > maxstats.Attack {
+        maxstats.Attack = attack
+    }
+    if defense > maxstats.Defense {
+        maxstats.Defense = defense
+    }
+    if special_attack > maxstats.Special_attack {
+        maxstats.Special_attack = special_attack
+    }
+    if special_defense > maxstats.Special_defense {
+        maxstats.Special_defense = special_defense
+    }
+    if speed > maxstats.Speed {
+        maxstats.Speed = speed
+    }
 
 }
 
@@ -117,6 +136,7 @@ func (s *Scraper) run() {
 	workers := 8
 
 	s.wg.Add(151)
+
 
 	go s.pokeGenerator(queue)
 
