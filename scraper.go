@@ -25,22 +25,27 @@ type NewPokemon struct {
 	HP              int
 	Attack          int
 	Defense         int
-	Special_attack   int
-	Special_defense  int
+	Special_attack  int
+	Special_defense int
 	Speed           int
-}
-
-type MaxStats struct {
-        HP              int
-    Attack          int
-    Defense         int
-    Special_attack   int
-    Special_defense  int
-    Speed           int
 }
 
 func (NewPokemon) TableName() string {
 	return "pokemon"
+}
+
+type MaxStats struct {
+	ID              uint `gorm:"primarykey" `
+	HP              int
+	Attack          int
+	Defense         int
+	Special_attack  int
+	Special_defense int
+	Speed           int
+}
+
+func (MaxStats) TableName() string {
+	return "max_stats"
 }
 
 type Scraper struct {
@@ -49,7 +54,7 @@ type Scraper struct {
 	balance      int
 	downloader   Downloader
 	pokemon_data []NewPokemon
-    maxstats MaxStats
+	maxstats     MaxStats
 }
 
 func NewScraper() Scraper {
@@ -85,31 +90,31 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 		HP:              hp,
 		Attack:          attack,
 		Defense:         defense,
-		Special_attack:   special_attack,
-		Special_defense:  special_defense,
+		Special_attack:  special_attack,
+		Special_defense: special_defense,
 		Speed:           speed,
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.pokemon_data = append(s.pokemon_data, new_pokemon)
-    if hp > maxstats.HP {
-        maxstats.HP = hp
-    }
-    if attack > maxstats.Attack {
-        maxstats.Attack = attack
-    }
-    if defense > maxstats.Defense {
-        maxstats.Defense = defense
-    }
-    if special_attack > maxstats.Special_attack {
-        maxstats.Special_attack = special_attack
-    }
-    if special_defense > maxstats.Special_defense {
-        maxstats.Special_defense = special_defense
-    }
-    if speed > maxstats.Speed {
-        maxstats.Speed = speed
-    }
+	if hp > s.maxstats.HP {
+		s.maxstats.HP = hp
+	}
+	if attack > s.maxstats.Attack {
+		s.maxstats.Attack = attack
+	}
+	if defense > s.maxstats.Defense {
+		s.maxstats.Defense = defense
+	}
+	if special_attack > s.maxstats.Special_attack {
+		s.maxstats.Special_attack = special_attack
+	}
+	if special_defense > s.maxstats.Special_defense {
+		s.maxstats.Special_defense = special_defense
+	}
+	if speed > s.maxstats.Speed {
+		s.maxstats.Speed = speed
+	}
 
 }
 
@@ -137,7 +142,6 @@ func (s *Scraper) run() {
 
 	s.wg.Add(151)
 
-
 	go s.pokeGenerator(queue)
 
 	for i := 0; i < workers; i++ {
@@ -147,6 +151,7 @@ func (s *Scraper) run() {
 
 	s.wg.Wait()
 	insertPokemon(s.pokemon_data)
+	insertMaxStats(s.maxstats)
 
 }
 
@@ -165,12 +170,24 @@ func insertPokemon(pokemon_results []NewPokemon) {
 	}
 
 	notfound := NewPokemon{
-		Pokemon_id:      0,
-		Name:            "Not Found",
+		Pokemon_id: 0,
+		Name:       "Not Found",
 	}
 	pokemon_results = append(pokemon_results, notfound)
 
 	result := db.Create(&pokemon_results)
+	if result.Error != nil {
+		log.Print((err))
+	}
+}
+
+func insertMaxStats(max_stats MaxStats) {
+	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+	if err != nil {
+		log.Print((err))
+	}
+
+	result := db.Create(&max_stats)
 	if result.Error != nil {
 		log.Print((err))
 	}

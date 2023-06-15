@@ -181,6 +181,24 @@ func createTable(db *sql.DB) {
 	}
 	statement.Exec() // Execute SQL Statements
 	log.Println("Pokemon table created")
+
+	createMaxStatsTableSQL := `CREATE TABLE IF NOT EXISTS max_stats (
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "hp" integer NOT NULL,
+        "attack" integer NOT NULL,
+        "defense" integer NOT NULL,
+        "special_attack" integer NOT NULL,
+        "special_defense" integer NOT NULL,
+        "speed" integer NOT NULL
+      );` // SQL Statement for Create Table
+
+	log.Println("Create max stats table...")
+	stats_statement, err := db.Prepare(createMaxStatsTableSQL) // Prepare SQL Statement
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	stats_statement.Exec() // Execute SQL Statements
+	log.Println("Max stats table created")
 }
 
 func getPokemon(search string) NewPokemon {
