@@ -15,6 +15,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+    "math"
 )
 
 var grid *ui.Grid
@@ -84,7 +85,7 @@ func main() {
 		hp.Text = strconv.Itoa(currentPokemon.HP)
 		hp.SetRect(image_width, 10, termWidth, 13)
 
-		ui.Render(hp)
+
 
 		attack := widgets.NewParagraph()
 		attack.Text = strconv.Itoa(currentPokemon.Attack)
@@ -97,19 +98,13 @@ func main() {
 		speed := widgets.NewParagraph()
 		speed.Text = strconv.Itoa(currentPokemon.Speed)
 		speed.SetRect(image_width, 26, termWidth, 29)
-
+        
+        ui.Render(hp)
 		ui.Render(attack)
 		ui.Render(defense)
 		ui.Render(speed)
 
-		g0 := widgets.NewGauge()
-		g0.Title = "Special Attack"
-		g0.SetRect(image_width, 32, termWidth, 42)
-		g0.Percent = currentPokemon.Special_attack
-		g0.BarColor = ui.ColorRed
-		g0.BorderStyle.Fg = ui.ColorWhite
-		g0.TitleStyle.Fg = ui.ColorCyan
-		ui.Render(g0)
+
 	}
 
 	drawInput()

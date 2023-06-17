@@ -8,12 +8,14 @@ require (
 	github.com/gookit/color v1.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/mattn/go-runewidth v0.0.2 // indirect
+	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v1.14.16 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
-	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d // indirect
+	github.com/mum4k/termdash v0.18.0 // indirect
+	github.com/nsf/termbox-go v1.1.1 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
-	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	gorm.io/driver/sqlite v1.5.0 // indirect
 	gorm.io/gorm v1.25.1 // indirect
 )
