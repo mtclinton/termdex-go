@@ -15,7 +15,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-    "math"
+    . "github.com/gizak/termui/v3"
 )
 
 var grid *ui.Grid
@@ -24,6 +24,48 @@ const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 type SearchPokemon struct {
 	search string
+}
+
+type Gauge struct {
+    Block
+    Percent    int
+    BarColor   Color
+    Label      string
+    LabelStyle Style
+}
+
+func NewGauge() *Gauge {
+    return &Gauge{
+        Block:      *NewBlock(),
+        BarColor:   Theme.Gauge.Bar,
+        LabelStyle: Theme.Gauge.Label,
+    }
+}
+
+func (self *Gauge) Draw(buf *Buffer) {
+    self.Block.Draw(buf)
+
+    label := ""
+
+    // plot bar
+    barWidth := int((float64(self.Percent) / 100) * float64(self.Inner.Dx()))
+    buf.Fill(
+        NewCell(' ', NewStyle(ColorClear, self.BarColor)),
+        image.Rect(self.Inner.Min.X, self.Inner.Min.Y, self.Inner.Min.X+barWidth, self.Inner.Max.Y),
+    )
+
+    // plot label
+    labelXCoordinate := self.Inner.Min.X + (self.Inner.Dx() / 2) - int(float64(len(label))/2)
+    labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
+    if labelYCoordinate < self.Inner.Max.Y {
+        for i, char := range label {
+            style := self.LabelStyle
+            if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
+                style = NewStyle(self.BarColor, ColorClear, ModifierReverse)
+            }
+            buf.SetCell(NewCell(char, style), image.Pt(labelXCoordinate+i, labelYCoordinate))
+        }
+    }
 }
 
 func main() {
@@ -81,30 +123,49 @@ func main() {
 
 		ui.Render(n)
 
-		hp := widgets.NewParagraph()
-		hp.Text = strconv.Itoa(currentPokemon.HP)
-		hp.SetRect(image_width, 10, termWidth, 13)
+        hp := NewGauge()
+        hp.Title = "HP"
+        hp.SetRect(image_width, termHeight-29, termWidth, termHeight-25)
+        hp.Percent = currentPokemon.HP
+        hp.BarColor = ui.ColorGreen
+        hp.Border = false
 
+        attack := NewGauge()
+        attack.Title = "Attack"
+        attack.SetRect(image_width, termHeight-24, termWidth, termHeight-20)
+        attack.Percent = currentPokemon.Attack
+        attack.BarColor = ui.ColorRed
+        attack.Border = false
 
+		defense := NewGauge()
+        defense.Title = "Defense"
+        defense.SetRect(image_width, termHeight-19, termWidth, termHeight-15)
+        defense.Percent = currentPokemon.Defense
+        defense.BarColor = ui.ColorBlue
+        defense.Border = false
 
-		attack := widgets.NewParagraph()
-		attack.Text = strconv.Itoa(currentPokemon.Attack)
-		attack.SetRect(image_width, 15, termWidth, 18)
+        special_attack := NewGauge()
+        special_attack.Title = "Special Attack"
+        special_attack.SetRect(image_width, termHeight-14, termWidth, termHeight-10)
+        special_attack.Percent = currentPokemon.Special_defense
+        special_attack.BarColor = ui.ColorMagenta
+        special_attack.Border = false
 
-		defense := widgets.NewParagraph()
-		defense.Text = strconv.Itoa(currentPokemon.Defense)
-		defense.SetRect(image_width, 20, termWidth, 23)
+        special_defense := NewGauge()
+        special_defense.Title = "Special Defense"
+        special_defense.SetRect(image_width, termHeight-9, termWidth, termHeight-5)
+        special_defense.Percent = currentPokemon.Special_attack
+        special_defense.BarColor = ui.ColorCyan
+        special_defense.Border = false
 
-		speed := widgets.NewParagraph()
-		speed.Text = strconv.Itoa(currentPokemon.Speed)
-		speed.SetRect(image_width, 26, termWidth, 29)
-        
-        ui.Render(hp)
-		ui.Render(attack)
-		ui.Render(defense)
-		ui.Render(speed)
+        speed := NewGauge()
+        speed.Title = "Speed"
+        speed.SetRect(image_width, termHeight-4, termWidth, termHeight)
+        speed.Percent = currentPokemon.Speed
+        speed.BarColor = ui.ColorYellow
+        speed.Border = false
 
-
+        ui.Render(hp, attack, defense, special_attack, special_defense, speed)
 	}
 
 	drawInput()
