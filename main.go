@@ -122,10 +122,20 @@ func main() {
         
 
 		n := widgets.NewParagraph()
-		n.Text = cases.Title(language.English).String(currentPokemon.Name)
+        // n.Title = "Name"
+		n.Text = "["+cases.Title(language.English).String(currentPokemon.Name)+"](fg:blue,mod:bold)"
 		n.SetRect(image_width, 5, termWidth, 8)
+        n.Border = false
 
 		ui.Render(n)
+
+        height := widgets.NewParagraph()
+        // height.Title = "Height"
+        height.Text = "Height: "+strconv.Itoa(currentPokemon.Height)
+        height.SetRect(image_width, 9, termWidth, 12)
+        height.Border = false
+
+        ui.Render(n, height)
 
         hp := NewGauge()
         hp.Title = "HP"
