@@ -135,7 +135,13 @@ func main() {
         height.SetRect(image_width, 9, termWidth, 12)
         height.Border = false
 
-        ui.Render(n, height)
+        weight := widgets.NewParagraph()
+        // weight.Title = "Height"
+        weight.Text = "Weight: "+strconv.Itoa(currentPokemon.Weight)
+        weight.SetRect(image_width, 13, termWidth, 16)
+        weight.Border = false
+
+        ui.Render(n, height, weight)
 
         hp := NewGauge()
         hp.Title = "HP"
