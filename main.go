@@ -4,8 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	. "github.com/gizak/termui/v3"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -14,10 +17,7 @@ import (
 	"log"
 	"os"
 	"strconv"
-    . "github.com/gizak/termui/v3"
-    "strings"
-    "golang.org/x/text/cases"
-    "golang.org/x/text/language"
+	"strings"
 )
 
 var grid *ui.Grid
@@ -29,45 +29,45 @@ type SearchPokemon struct {
 }
 
 type Gauge struct {
-    Block
-    Percent    int
-    BarColor   Color
-    Label      string
-    LabelStyle Style
+	Block
+	Percent    int
+	BarColor   Color
+	Label      string
+	LabelStyle Style
 }
 
 func NewGauge() *Gauge {
-    return &Gauge{
-        Block:      *NewBlock(),
-        BarColor:   Theme.Gauge.Bar,
-        LabelStyle: Theme.Gauge.Label,
-    }
+	return &Gauge{
+		Block:      *NewBlock(),
+		BarColor:   Theme.Gauge.Bar,
+		LabelStyle: Theme.Gauge.Label,
+	}
 }
 
 func (self *Gauge) Draw(buf *Buffer) {
-    self.Block.Draw(buf)
+	self.Block.Draw(buf)
 
-    label := ""
+	label := ""
 
-    // plot bar
-    barWidth := int((float64(self.Percent) / 100) * float64(self.Inner.Dx()))
-    buf.Fill(
-        NewCell(' ', NewStyle(ColorClear, self.BarColor)),
-        image.Rect(self.Inner.Min.X, self.Inner.Min.Y, self.Inner.Min.X+barWidth, self.Inner.Max.Y),
-    )
+	// plot bar
+	barWidth := int((float64(self.Percent) / 100) * float64(self.Inner.Dx()))
+	buf.Fill(
+		NewCell(' ', NewStyle(ColorClear, self.BarColor)),
+		image.Rect(self.Inner.Min.X, self.Inner.Min.Y, self.Inner.Min.X+barWidth, self.Inner.Max.Y),
+	)
 
-    // plot label
-    labelXCoordinate := self.Inner.Min.X + (self.Inner.Dx() / 2) - int(float64(len(label))/2)
-    labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
-    if labelYCoordinate < self.Inner.Max.Y {
-        for i, char := range label {
-            style := self.LabelStyle
-            if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
-                style = NewStyle(self.BarColor, ColorClear, ModifierReverse)
-            }
-            buf.SetCell(NewCell(char, style), image.Pt(labelXCoordinate+i, labelYCoordinate))
-        }
-    }
+	// plot label
+	labelXCoordinate := self.Inner.Min.X + (self.Inner.Dx() / 2) - int(float64(len(label))/2)
+	labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
+	if labelYCoordinate < self.Inner.Max.Y {
+		for i, char := range label {
+			style := self.LabelStyle
+			if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
+				style = NewStyle(self.BarColor, ColorClear, ModifierReverse)
+			}
+			buf.SetCell(NewCell(char, style), image.Pt(labelXCoordinate+i, labelYCoordinate))
+		}
+	}
 }
 
 func main() {
@@ -119,73 +119,91 @@ func main() {
 
 		ui.Render(p)
 
-        
-
 		n := widgets.NewParagraph()
-        // n.Title = "Name"
-		n.Text = "["+cases.Title(language.English).String(currentPokemon.Name)+"](fg:blue,mod:bold)"
+		// n.Title = "Name"
+		n.Text = "[" + cases.Title(language.English).String(currentPokemon.Name) + "](fg:blue,mod:bold)"
 		n.SetRect(image_width, 5, termWidth, 8)
-        n.Border = false
+		n.Border = false
 
 		ui.Render(n)
 
-        height := widgets.NewParagraph()
-        // height.Title = "Height"
-        height.Text = "Height: "+strconv.Itoa(currentPokemon.Height)
-        height.SetRect(image_width, 9, termWidth, 12)
-        height.Border = false
+		stats_table := widgets.NewTable()
+		stats_table.Rows = [][]string{
+			[]string{"HP", "Attack", "Defense", "S Attack", "S Defense", "Speed"},
+			[]string{strconv.Itoa(currentPokemon.HP), strconv.Itoa(currentPokemon.Attack), strconv.Itoa(currentPokemon.Defense),
+				strconv.Itoa(currentPokemon.Special_attack), strconv.Itoa(currentPokemon.Special_defense), strconv.Itoa(currentPokemon.Speed)},
+		}
+		stats_table.TextStyle = ui.NewStyle(ui.ColorWhite)
+		stats_table.TextAlignment = ui.AlignCenter
+		// stats_table.RowSeparator = false
+		stats_table.Border = false
+		stats_table.SetRect(image_width, 10, termWidth, 20)
 
-        weight := widgets.NewParagraph()
-        // weight.Title = "Height"
-        weight.Text = "Weight: "+strconv.Itoa(currentPokemon.Weight)
-        weight.SetRect(image_width, 13, termWidth, 16)
-        weight.Border = false
+		ui.Render(stats_table)
 
-        ui.Render(n, height, weight)
+		height := widgets.NewParagraph()
+		// height.Title = "Height"
+		height.Text = "Height: " + strconv.Itoa(currentPokemon.Height)
+		height.SetRect(image_width, 21, termWidth, 24)
+		height.Border = false
 
-        hp := NewGauge()
-        hp.Title = "HP"
-        hp.SetRect(image_width, termHeight-24, termWidth, termHeight-20)
-        hp.Percent = currentPokemon.HP
-        hp.BarColor = ui.ColorGreen
-        hp.Border = false
+		weight := widgets.NewParagraph()
+		// weight.Title = "Height"
+		weight.Text = "Weight: " + strconv.Itoa(currentPokemon.Weight)
+		weight.SetRect(image_width, 25, termWidth, 28)
+		weight.Border = false
 
-        attack := NewGauge()
-        attack.Title = "Attack"
-        attack.SetRect(image_width, termHeight-20, termWidth, termHeight-16)
-        attack.Percent = currentPokemon.Attack
-        attack.BarColor = ui.ColorRed
-        attack.Border = false
+		ui.Render(n, height, weight)
+
+		stats_title := widgets.NewParagraph()
+		stats_title.Text = "Stats"
+		stats_title.SetRect((termWidth+image_width)/2, termHeight-27, termWidth, termHeight-24)
+		stats_title.Border = false
+		ui.Render(stats_title)
+
+		hp := NewGauge()
+		hp.Title = "HP"
+		hp.SetRect(image_width, termHeight-24, termWidth, termHeight-20)
+		hp.Percent = currentPokemon.HP
+		hp.BarColor = ui.ColorGreen
+		hp.Border = false
+
+		attack := NewGauge()
+		attack.Title = "Attack"
+		attack.SetRect(image_width, termHeight-20, termWidth, termHeight-16)
+		attack.Percent = currentPokemon.Attack
+		attack.BarColor = ui.ColorRed
+		attack.Border = false
 
 		defense := NewGauge()
-        defense.Title = "Defense"
-        defense.SetRect(image_width, termHeight-16, termWidth, termHeight-12)
-        defense.Percent = currentPokemon.Defense
-        defense.BarColor = ui.ColorBlue
-        defense.Border = false
+		defense.Title = "Defense"
+		defense.SetRect(image_width, termHeight-16, termWidth, termHeight-12)
+		defense.Percent = currentPokemon.Defense
+		defense.BarColor = ui.ColorBlue
+		defense.Border = false
 
-        special_attack := NewGauge()
-        special_attack.Title = "Special Attack"
-        special_attack.SetRect(image_width, termHeight-12, termWidth, termHeight-8)
-        special_attack.Percent = currentPokemon.Special_defense
-        special_attack.BarColor = ui.ColorMagenta
-        special_attack.Border = false
+		special_attack := NewGauge()
+		special_attack.Title = "Special Attack"
+		special_attack.SetRect(image_width, termHeight-12, termWidth, termHeight-8)
+		special_attack.Percent = currentPokemon.Special_defense
+		special_attack.BarColor = ui.ColorMagenta
+		special_attack.Border = false
 
-        special_defense := NewGauge()
-        special_defense.Title = "Special Defense"
-        special_defense.SetRect(image_width, termHeight-8, termWidth, termHeight-4)
-        special_defense.Percent = currentPokemon.Special_attack
-        special_defense.BarColor = ui.ColorCyan
-        special_defense.Border = false
+		special_defense := NewGauge()
+		special_defense.Title = "Special Defense"
+		special_defense.SetRect(image_width, termHeight-8, termWidth, termHeight-4)
+		special_defense.Percent = currentPokemon.Special_attack
+		special_defense.BarColor = ui.ColorCyan
+		special_defense.Border = false
 
-        speed := NewGauge()
-        speed.Title = "Speed"
-        speed.SetRect(image_width, termHeight-4, termWidth, termHeight)
-        speed.Percent = currentPokemon.Speed
-        speed.BarColor = ui.ColorYellow
-        speed.Border = false
+		speed := NewGauge()
+		speed.Title = "Speed"
+		speed.SetRect(image_width, termHeight-4, termWidth, termHeight)
+		speed.Percent = currentPokemon.Speed
+		speed.BarColor = ui.ColorYellow
+		speed.Border = false
 
-        ui.Render(hp, attack, defense, special_attack, special_defense, speed)
+		ui.Render(hp, attack, defense, special_attack, special_defense, speed)
 	}
 
 	drawInput()
