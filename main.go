@@ -121,8 +121,8 @@ func main() {
 
 		n := widgets.NewParagraph()
 		// n.Title = "Name"
-		n.Text = "[" + cases.Title(language.English).String(currentPokemon.Name) + "](fg:blue,mod:bold)"
-		n.SetRect(image_width, 5, termWidth, 8)
+		n.Text = "[" + cases.Title(language.English).String(currentPokemon.Name) + "](fg:yellow,mod:bold)"
+		n.SetRect(image_width+2, 5, termWidth, 8)
 		n.Border = false
 
 		ui.Render(n)
@@ -143,20 +143,20 @@ func main() {
 
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
-		height.Text = "Height: " + strconv.Itoa(currentPokemon.Height)
-		height.SetRect(image_width, 21, termWidth, 24)
+		height.Text =  "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height)+ "](fg:red,mod:bold)"
+		height.SetRect((termWidth-image_width)/4+image_width, 23, (termWidth-image_width)/2+image_width, 28)
 		height.Border = false
 
 		weight := widgets.NewParagraph()
 		// weight.Title = "Height"
-		weight.Text = "Weight: " + strconv.Itoa(currentPokemon.Weight)
-		weight.SetRect(image_width, 25, termWidth, 28)
+		weight.Text = "[" + "Weight: " + "](fg:red)[" + strconv.Itoa(currentPokemon.Weight)+ "](fg:blue,mod:bold)"
+		weight.SetRect(((termWidth-image_width)/4*3)+image_width, 23, termWidth, 28)
 		weight.Border = false
 
 		ui.Render(n, height, weight)
 
 		stats_title := widgets.NewParagraph()
-		stats_title.Text = "Stats"
+		stats_title.Text = "[Stats](fg:green,mod:bold)"
 		stats_title.SetRect((termWidth+image_width)/2, termHeight-27, termWidth, termHeight-24)
 		stats_title.Border = false
 		ui.Render(stats_title)
