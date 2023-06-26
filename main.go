@@ -141,6 +141,12 @@ func main() {
 
 		ui.Render(stats_table)
 
+        type_title := widgets.NewParagraph()
+        // type_title.Title = "type_title"
+        type_title.Text =  "[" + "Types" + "](fg:cyan,mod:bold)"
+        type_title.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
+        type_title.Border = false
+
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
 		height.Text =  "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height)+ "](fg:red,mod:bold)"
@@ -153,7 +159,7 @@ func main() {
 		weight.SetRect(((termWidth-image_width)/4*3)+image_width, 23, termWidth, 28)
 		weight.Border = false
 
-		ui.Render(n, height, weight)
+		ui.Render(n, type_title, height, weight)
 
 		stats_title := widgets.NewParagraph()
 		stats_title.Text = "[Stats](fg:green,mod:bold)"
