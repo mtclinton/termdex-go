@@ -299,6 +299,34 @@ func createTable(db *sql.DB) {
 	}
 	stats_statement.Exec() // Execute SQL Statements
 	log.Println("Max stats table created")
+
+    createPokemonTypeTableSQL := `CREATE TABLE IF NOT EXISTS pokemon_type (
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "pokemon_id" integer NOT NULL,
+        "type_id" integer NOT NULL
+      );` // SQL Statement for Create Table
+
+    log.Println("Create pokemon type table...")
+    stats_statement, err := db.Prepare(createPokemonTypeTableSQL) // Prepare SQL Statement
+    if err != nil {
+        log.Fatal(err.Error())
+    }
+    stats_statement.Exec() // Execute SQL Statements
+    log.Println("Pokemon type table created")
+
+    createTypeNameTableSQL := `CREATE TABLE IF NOT EXISTS type_name (
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "name" TEXT NOT NULL,
+        "url" TEXT NOT NULL
+      );` // SQL Statement for Create Table
+
+    log.Println("Create type name table...")
+    stats_statement, err := db.Prepare(createTypeNameTableSQL) // Prepare SQL Statement
+    if err != nil {
+        log.Fatal(err.Error())
+    }
+    stats_statement.Exec() // Execute SQL Statements
+    log.Println("Type name table created")
 }
 
 func getPokemon(search string) NewPokemon {

@@ -34,6 +34,26 @@ func (NewPokemon) TableName() string {
 	return "pokemon"
 }
 
+type PokemonType struct {
+    ID              uint `gorm:"primarykey" `
+    Pokemon_id      int
+    Type_id         int
+}
+
+func (PokemonType) TableName() string {
+    return "pokemon_type"
+}
+
+type TypeName struct {
+    ID              uint `gorm:"primarykey" `
+    Name            string
+    URL             string
+}
+
+func (TypeName) TableName() string {
+    return "type_name"
+}
+
 type MaxStats struct {
 	ID              uint `gorm:"primarykey" `
 	HP              int
