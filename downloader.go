@@ -8,11 +8,12 @@ import (
 )
 
 type PokemonAPIData struct {
-	Name           string `json:"name"`
-	BaseExperience int    `json:"base_experience"`
-	Height         int    `json:"height"`
-	Weight         int    `json:"weight"`
-	Stats          []Stat `json:"stats"`
+	Name           string        `json:"name"`
+	BaseExperience int           `json:"base_experience"`
+	Height         int           `json:"height"`
+	Weight         int           `json:"weight"`
+	Stats          []Stat        `json:"stats"`
+	Types          []PokemonType `json:"types"`
 }
 
 type Stat struct {
@@ -22,6 +23,15 @@ type Stat struct {
 }
 
 type StatName struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type PokemonType struct {
+	TypeDetail TypeDetail `json:"type"`
+}
+
+type TypeDetail struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
