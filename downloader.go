@@ -19,7 +19,7 @@ type PokemonAPIData struct {
 type Stat struct {
 	BaseStat  int      `json:"base_stat"`
 	Effort    int      `json:"effort"`
-	StateName StatName `json:"stat"`
+	StatName StatName `json:"stat"`
 }
 
 type StatName struct {

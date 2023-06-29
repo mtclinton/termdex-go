@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 	"sync"
+    "golang.org/x/exp/slices"
 )
 
 var (
@@ -75,6 +76,7 @@ type Scraper struct {
 	downloader   Downloader
 	pokemon_data []NewPokemon
 	maxstats     MaxStats
+    type_names []TypeName
 }
 
 func NewScraper() Scraper {
@@ -135,6 +137,17 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 	if speed > s.maxstats.Speed {
 		s.maxstats.Speed = speed
 	}
+    for _, t := range data.Types {
+        idx := slices.IndexFunc(s.type_names, func(tn TypeName) bool { return tn.Name == t.StatName.Name })
+        if idx == -1 {
+            new_type := TypeName {
+                Name: t.StatName.Name,
+                URL: t.StatName.URL
+            }
+        }
+    }
+    
+
 
 }
 
