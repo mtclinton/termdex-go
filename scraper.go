@@ -65,6 +65,11 @@ type MaxStats struct {
 	Speed           int
 }
 
+type TypePokeTracker struct {
+    Pokemon_id      int
+    Name            string
+}
+
 func (MaxStats) TableName() string {
 	return "max_stats"
 }
@@ -77,6 +82,7 @@ type Scraper struct {
 	pokemon_data []NewPokemon
 	maxstats     MaxStats
     type_names []TypeName
+    tpt         []TypePokeTracker
 }
 
 func NewScraper() Scraper {
@@ -144,6 +150,12 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
                 Name: t.StatName.Name,
                 URL: t.StatName.URL
             }
+            s.type_names = append(s.type_names, new_type)
+            new_tpt := TypePokeTracker {
+                Pokemon_id: pid,
+                Name: t.StatName.Name
+            }
+            s.tpt = append(s.tpt, new_tpt)
         }
     }
     
@@ -224,4 +236,16 @@ func insertMaxStats(max_stats MaxStats) {
 	if result.Error != nil {
 		log.Print((err))
 	}
+}
+
+func insertTypeName(type_name TypeName) {
+    db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+    if err != nil {
+        log.Print((err))
+    }
+
+    result := db.Create(&type_name)
+    if result.Error != nil {
+        log.Print((err))
+    }
 }
