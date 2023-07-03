@@ -197,6 +197,8 @@ func (s *Scraper) run() {
 	s.wg.Wait()
 	insertPokemon(s.pokemon_data)
 	insertMaxStats(s.maxstats)
+    insertTypeName(s.type_names)
+    insertPokeType(s.tpt)
 
 }
 
@@ -238,13 +240,42 @@ func insertMaxStats(max_stats MaxStats) {
 	}
 }
 
-func insertTypeName(type_name TypeName) {
+func insertTypeName(type_names []TypeName) {
     db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
     if err != nil {
         log.Print((err))
     }
 
-    result := db.Create(&type_name)
+    result := db.Create(&type_names)
+    if result.Error != nil {
+        log.Print((err))
+    }
+}
+
+func insertPokeType(poke_types []TypePokeTracker) {
+    db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
+    if err != nil {
+        log.Print((err))
+    }
+    var type_names []TypeName
+    type_name_results := db.Find(&type_names)
+    if type_name_results.Error != nil {
+        log.Print((err))
+    }
+
+    var poke_types []PokemonType
+    for _, tracker := range s.tpt {
+        tid := slices.IndexFunc(type_name_results, func(tn TypeName) bool { return tn.Name == tracker.Name })
+        if tid == -1 {
+            log.Error(("Unkown Type"))
+        }
+        poke_type := PokemonType{
+            Pokemon_id: tracker.Pokemon_id,
+            Type_id: type_names[tid].ID
+        }
+        poke_types = append(poke_types, poke_type)
+    }
+    result := db.Create(&poke_types)
     if result.Error != nil {
         log.Print((err))
     }
