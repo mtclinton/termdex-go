@@ -94,7 +94,7 @@ func NewScraper() Scraper {
 func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 	var hp, attack, defense, special_attack, special_defense, speed int
 	for _, stat := range data.Stats {
-		switch stat_name := stat.StateName.Name; stat_name {
+		switch stat_name := stat.StatName.Name; stat_name {
 		case "hp":
 			hp = stat.BaseStat
 		case "attack":
@@ -144,16 +144,16 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 		s.maxstats.Speed = speed
 	}
     for _, t := range data.Types {
-        idx := slices.IndexFunc(s.type_names, func(tn TypeName) bool { return tn.Name == t.StatName.Name })
+        idx := slices.IndexFunc(s.type_names, func(tn TypeName) bool { return tn.Name == t.TypeDetail.Name })
         if idx == -1 {
             new_type := TypeName {
-                Name: t.StatName.Name,
-                URL: t.StatName.URL
+                Name: t.TypeDetail.Name,
+                URL: t.TypeDetail.URL,
             }
             s.type_names = append(s.type_names, new_type)
             new_tpt := TypePokeTracker {
                 Pokemon_id: pid,
-                Name: t.StatName.Name
+                Name: t.TypeDetail.Name,
             }
             s.tpt = append(s.tpt, new_tpt)
         }
@@ -252,7 +252,7 @@ func insertTypeName(type_names []TypeName) {
     }
 }
 
-func insertPokeType(poke_types []TypePokeTracker) {
+func insertPokeType(type_poke_tracker []TypePokeTracker) {
     db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
     if err != nil {
         log.Print((err))
@@ -264,14 +264,15 @@ func insertPokeType(poke_types []TypePokeTracker) {
     }
 
     var poke_types []PokemonType
-    for _, tracker := range s.tpt {
+    for _, tracker := range type_poke_tracker {
         tid := slices.IndexFunc(type_name_results, func(tn TypeName) bool { return tn.Name == tracker.Name })
         if tid == -1 {
-            log.Error(("Unkown Type"))
+            log.Panic(("Unknown Type"))
         }
+        idx := int(tid)
         poke_type := PokemonType{
             Pokemon_id: tracker.Pokemon_id,
-            Type_id: type_names[tid].ID
+            Type_id: int(type_names[idx].ID),
         }
         poke_types = append(poke_types, poke_type)
     }

@@ -13,7 +13,7 @@ type PokemonAPIData struct {
 	Height         int           `json:"height"`
 	Weight         int           `json:"weight"`
 	Stats          []Stat        `json:"stats"`
-	Types          []PokemonType `json:"types"`
+	Types          []PokeType `json:"types"`
 }
 
 type Stat struct {
@@ -27,7 +27,7 @@ type StatName struct {
 	URL  string `json:"url"`
 }
 
-type PokemonType struct {
+type PokeType struct {
 	TypeDetail TypeDetail `json:"type"`
 }
 

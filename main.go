@@ -307,11 +307,11 @@ func createTable(db *sql.DB) {
       );` // SQL Statement for Create Table
 
     log.Println("Create pokemon type table...")
-    stats_statement, err := db.Prepare(createPokemonTypeTableSQL) // Prepare SQL Statement
+    poke_type_statement, err := db.Prepare(createPokemonTypeTableSQL) // Prepare SQL Statement
     if err != nil {
         log.Fatal(err.Error())
     }
-    stats_statement.Exec() // Execute SQL Statements
+    poke_type_statement.Exec() // Execute SQL Statements
     log.Println("Pokemon type table created")
 
     createTypeNameTableSQL := `CREATE TABLE IF NOT EXISTS type_name (
@@ -321,11 +321,11 @@ func createTable(db *sql.DB) {
       );` // SQL Statement for Create Table
 
     log.Println("Create type name table...")
-    stats_statement, err := db.Prepare(createTypeNameTableSQL) // Prepare SQL Statement
+    type_name_statement, err := db.Prepare(createTypeNameTableSQL) // Prepare SQL Statement
     if err != nil {
         log.Fatal(err.Error())
     }
-    stats_statement.Exec() // Execute SQL Statements
+    type_name_statement.Exec() // Execute SQL Statements
     log.Println("Type name table created")
 }
 
