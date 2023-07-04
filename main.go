@@ -141,21 +141,21 @@ func main() {
 
 		ui.Render(stats_table)
 
-        type_title := widgets.NewParagraph()
-        // type_title.Title = "type_title"
-        type_title.Text =  "[" + "Types" + "](fg:cyan,mod:bold)"
-        type_title.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
-        type_title.Border = false
+		type_title := widgets.NewParagraph()
+		// type_title.Title = "type_title"
+		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)"
+		type_title.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
+		type_title.Border = false
 
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
-		height.Text =  "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height)+ "](fg:red,mod:bold)"
+		height.Text = "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height) + "](fg:red,mod:bold)"
 		height.SetRect((termWidth-image_width)/4+image_width, 23, (termWidth-image_width)/2+image_width, 28)
 		height.Border = false
 
 		weight := widgets.NewParagraph()
 		// weight.Title = "Height"
-		weight.Text = "[" + "Weight: " + "](fg:red)[" + strconv.Itoa(currentPokemon.Weight)+ "](fg:blue,mod:bold)"
+		weight.Text = "[" + "Weight: " + "](fg:red)[" + strconv.Itoa(currentPokemon.Weight) + "](fg:blue,mod:bold)"
 		weight.SetRect(((termWidth-image_width)/4*3)+image_width, 23, termWidth, 28)
 		weight.Border = false
 
@@ -300,33 +300,33 @@ func createTable(db *sql.DB) {
 	stats_statement.Exec() // Execute SQL Statements
 	log.Println("Max stats table created")
 
-    createPokemonTypeTableSQL := `CREATE TABLE IF NOT EXISTS pokemon_type (
+	createPokemonTypeTableSQL := `CREATE TABLE IF NOT EXISTS pokemon_type (
         "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
         "pokemon_id" integer NOT NULL,
         "type_id" integer NOT NULL
       );` // SQL Statement for Create Table
 
-    log.Println("Create pokemon type table...")
-    poke_type_statement, err := db.Prepare(createPokemonTypeTableSQL) // Prepare SQL Statement
-    if err != nil {
-        log.Fatal(err.Error())
-    }
-    poke_type_statement.Exec() // Execute SQL Statements
-    log.Println("Pokemon type table created")
+	log.Println("Create pokemon type table...")
+	poke_type_statement, err := db.Prepare(createPokemonTypeTableSQL) // Prepare SQL Statement
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	poke_type_statement.Exec() // Execute SQL Statements
+	log.Println("Pokemon type table created")
 
-    createTypeNameTableSQL := `CREATE TABLE IF NOT EXISTS type_name (
+	createTypeNameTableSQL := `CREATE TABLE IF NOT EXISTS type_name (
         "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
         "name" TEXT NOT NULL,
         "url" TEXT NOT NULL
       );` // SQL Statement for Create Table
 
-    log.Println("Create type name table...")
-    type_name_statement, err := db.Prepare(createTypeNameTableSQL) // Prepare SQL Statement
-    if err != nil {
-        log.Fatal(err.Error())
-    }
-    type_name_statement.Exec() // Execute SQL Statements
-    log.Println("Type name table created")
+	log.Println("Create type name table...")
+	type_name_statement, err := db.Prepare(createTypeNameTableSQL) // Prepare SQL Statement
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	type_name_statement.Exec() // Execute SQL Statements
+	log.Println("Type name table created")
 }
 
 func getPokemon(search string) NewPokemon {
