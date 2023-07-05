@@ -151,12 +151,12 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, pid int) {
 				URL:  t.TypeDetail.URL,
 			}
 			s.type_names = append(s.type_names, new_type)
-			new_tpt := TypePokeTracker{
-				Pokemon_id: pid,
-				Name:       t.TypeDetail.Name,
-			}
-			s.tpt = append(s.tpt, new_tpt)
 		}
+		new_tpt := TypePokeTracker{
+			Pokemon_id: pid,
+			Name:       t.TypeDetail.Name,
+		}
+		s.tpt = append(s.tpt, new_tpt)
 	}
 
 }

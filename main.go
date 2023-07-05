@@ -16,6 +16,7 @@ import (
 	_ "image/png"
 	"log"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -79,7 +80,7 @@ func main() {
 	initializePokemon()
 
 	var termPokemon SearchPokemon
-	currentPokemon := getPokemon("1")
+	currentPokemon, types := getPokemon("2")
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
@@ -143,7 +144,7 @@ func main() {
 
 		type_title := widgets.NewParagraph()
 		// type_title.Title = "type_title"
-		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)"
+		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)" + strings.Join(types, " ")
 		type_title.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
 		type_title.Border = false
 
@@ -228,7 +229,7 @@ func main() {
 			}
 
 		case "<Enter>":
-			currentPokemon = getPokemon(termPokemon.search)
+			currentPokemon, types = getPokemon(termPokemon.search)
 			termPokemon.search = ""
 			drawInput()
 			draw()
@@ -329,7 +330,7 @@ func createTable(db *sql.DB) {
 	log.Println("Type name table created")
 }
 
-func getPokemon(search string) NewPokemon {
+func getPokemon(search string) (NewPokemon, []string) {
 	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
@@ -337,6 +338,9 @@ func getPokemon(search string) NewPokemon {
 		panic("failed to connect database")
 	}
 	var pokemon NewPokemon
+	var pokemon_types []PokemonType
+	var type_names []TypeName
+	var names []string
 	if _, err := strconv.Atoi(search); err == nil {
 		result := db.Where("pokemon_id = ?", search).First(&pokemon)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -348,8 +352,23 @@ func getPokemon(search string) NewPokemon {
 			db.Where("name = ").First(&pokemon)
 		}
 	}
+	types_result := db.Where("pokemon_id = ?", pokemon.Pokemon_id).Find(&pokemon_types)
+	if !errors.Is(types_result.Error, gorm.ErrRecordNotFound) {
+		var pokemon_types_ids []int
+		for _, pokemon_type := range pokemon_types {
+			r := reflect.ValueOf(pokemon_type)
+			f := reflect.Indirect(r).FieldByName("Type_id")
+			pokemon_types_ids = append(pokemon_types_ids, int(f.Int()))
+		}
+		db.Where("ID in ?", pokemon_types_ids).Find(&type_names)
+		for _, type_name := range type_names {
+			r := reflect.ValueOf(type_name)
+			f := reflect.Indirect(r).FieldByName("Name")
+			names = append(names, f.String())
+		}
+	}
 
-	return pokemon
+	return pokemon, names
 
 }
 
