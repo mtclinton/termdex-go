@@ -144,9 +144,36 @@ func main() {
 
 		type_title := widgets.NewParagraph()
 		// type_title.Title = "type_title"
-		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)" + strings.Join(types, " ")
-		type_title.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
+		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)"
+		type_title.SetRect((termWidth-image_width)/2+image_width, 15, termWidth, 18)
 		type_title.Border = false
+
+        if len(types) == 1 {
+            type_data := widgets.NewParagraph()
+            // type_title.Title = "type_title"
+            type_data.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:yellow,mod:bold)"
+            type_data.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
+            type_data.Border = false
+            ui.Render(type_data)
+        } else {
+            type_data1 := widgets.NewParagraph()
+            // type_title.Title = "type_title"
+            type_data1.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:magenta,mod:bold)"
+            type_data1.SetRect((termWidth-image_width)/4+image_width, 19, (termWidth-image_width)/2+image_width, 22)
+            type_data1.Border = false
+
+            type_data2 := widgets.NewParagraph()
+            // type_title.Title = "type_title"
+            type_data2.Text = "[" + cases.Title(language.English).String(types[1]) + "](fg:magenta,mod:bold)"
+            type_data2.SetRect(((termWidth-image_width)/4*3)+image_width, 19, termWidth, 22)
+            type_data2.Border = false
+
+            ui.Render(type_data1, type_data2)
+
+        }
+
+
+
 
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
