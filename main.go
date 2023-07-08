@@ -174,7 +174,6 @@ func main() {
 
 
 
-
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
 		height.Text = "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height) + "](fg:red,mod:bold)"
@@ -396,6 +395,21 @@ func getPokemon(search string) (NewPokemon, []string) {
 	}
 
 	return pokemon, names
+}
+
+func getMaxStats() MaxStats {
+    db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{
+        Logger: logger.Default.LogMode(logger.Silent),
+    })
+    if err != nil {
+        panic("failed to connect database")
+    }
+    var maxStats MaxStats
+    result := db.First(&maxStats)
+    if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+        panic("No max stats value")
+    }
+    return maxStats
 
 }
 
