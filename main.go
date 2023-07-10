@@ -80,7 +80,9 @@ func main() {
 	initializePokemon()
 
 	var termPokemon SearchPokemon
-	currentPokemon, types := getPokemon("2")
+	currentPokemon, types := getPokemon("25")
+
+    maxStats := getMaxStats()
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
@@ -197,42 +199,42 @@ func main() {
 		hp := NewGauge()
 		hp.Title = "HP"
 		hp.SetRect(image_width, termHeight-24, termWidth, termHeight-20)
-		hp.Percent = currentPokemon.HP
+		hp.Percent = currentPokemon.HP*100/maxStats.HP
 		hp.BarColor = ui.ColorGreen
 		hp.Border = false
 
 		attack := NewGauge()
 		attack.Title = "Attack"
 		attack.SetRect(image_width, termHeight-20, termWidth, termHeight-16)
-		attack.Percent = currentPokemon.Attack
+		attack.Percent = currentPokemon.Attack*100/maxStats.Attack
 		attack.BarColor = ui.ColorRed
 		attack.Border = false
 
 		defense := NewGauge()
 		defense.Title = "Defense"
 		defense.SetRect(image_width, termHeight-16, termWidth, termHeight-12)
-		defense.Percent = currentPokemon.Defense
+		defense.Percent = currentPokemon.Defense*100/maxStats.Defense
 		defense.BarColor = ui.ColorBlue
 		defense.Border = false
 
 		special_attack := NewGauge()
 		special_attack.Title = "Special Attack"
 		special_attack.SetRect(image_width, termHeight-12, termWidth, termHeight-8)
-		special_attack.Percent = currentPokemon.Special_defense
+		special_attack.Percent = currentPokemon.Special_defense*100/maxStats.Special_defense
 		special_attack.BarColor = ui.ColorMagenta
 		special_attack.Border = false
 
 		special_defense := NewGauge()
 		special_defense.Title = "Special Defense"
 		special_defense.SetRect(image_width, termHeight-8, termWidth, termHeight-4)
-		special_defense.Percent = currentPokemon.Special_attack
+		special_defense.Percent = currentPokemon.Special_attack*100/maxStats.Special_attack
 		special_defense.BarColor = ui.ColorCyan
 		special_defense.Border = false
 
 		speed := NewGauge()
 		speed.Title = "Speed"
 		speed.SetRect(image_width, termHeight-4, termWidth, termHeight)
-		speed.Percent = currentPokemon.Speed
+		speed.Percent = currentPokemon.Speed*100/maxStats.Speed
 		speed.BarColor = ui.ColorYellow
 		speed.Border = false
 
