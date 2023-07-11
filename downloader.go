@@ -16,6 +16,14 @@ type PokemonAPIData struct {
 	Types          []PokeType `json:"types"`
 }
 
+type EntryAPIData struct {
+	Entries          []Entry `json:"flavor_text_entries"`
+}
+
+type Entry struct {
+	EntryText 		string `json:"flavor_text"`
+}
+
 type Stat struct {
 	BaseStat int      `json:"base_stat"`
 	Effort   int      `json:"effort"`
@@ -117,4 +125,42 @@ func (d Downloader) get_sprite(url string) ([]byte, error) {
 		}
 	}
 	return nil, errors.New("Something went wrong downloading sprites")
+}
+
+func (d Downloader) make_entry_request(url string) (PokemonAPIData, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return EntryAPIData{}, err
+	}
+	res, getErr := d.client.Do(req)
+	if getErr != nil {
+		return EntryAPIData{}, getErr
+	}
+	if res.Body != nil {
+		defer res.Body.Close()
+	}
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		return EntryAPIData{}, readErr
+	}
+
+	apiData := EntryAPIData{}
+	jsonErr := json.Unmarshal(body, &apiData)
+	if jsonErr != nil {
+		return EntryAPIData{}, jsonErr
+	}
+	return apiData, nil
+}
+
+func (d Downloader) get_entry(url string) (EntryAPIData, error) {
+	for i := 0; i < d.tries; i++ {
+		apiData, err := d.make_entry_request(url)
+		if err == nil {
+			return apiData, nil
+		}
+		if i+1 == d.tries {
+			return EntryAPIData{}, err
+		}
+	}
+	return EntryAPIData{}, errors.New("Something went wrong downloading entry")
 }
