@@ -29,7 +29,7 @@ type NewPokemon struct {
 	Special_attack  int
 	Special_defense int
 	Speed           int
-    Entry           string
+	Entry           string
 }
 
 func (NewPokemon) TableName() string {
@@ -92,7 +92,7 @@ func NewScraper() Scraper {
 	}
 }
 
-func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData,pid int) {
+func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData, pid int) {
 	var hp, attack, defense, special_attack, special_defense, speed int
 	for _, stat := range data.Stats {
 		switch stat_name := stat.StatName.Name; stat_name {
@@ -110,6 +110,10 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData,pid 
 			speed = stat.BaseStat
 		}
 	}
+	entry := entry_data.Entries[0].EntryText
+	entry = strings.ReplaceAll(entry, "\n", " ")
+	entry = strings.ReplaceAll(entry, "\u000c", " ")
+
 	new_pokemon := NewPokemon{
 		Pokemon_id:      pid,
 		Name:            data.Name,
@@ -122,6 +126,7 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData,pid 
 		Special_attack:  special_attack,
 		Special_defense: special_defense,
 		Speed:           speed,
+		Entry:           entry,
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -163,18 +168,18 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData,pid 
 }
 
 func (s *Scraper) handle_url(pid string) {
-    url := "https://pokeapi.co/api/v2/pokemon/"+p
+	url := "https://pokeapi.co/api/v2/pokemon/" + p
 	api_data, err := s.downloader.get(url)
 	if err != nil {
 		log.Print(err)
 		return
 	}
-    entry_url := "https://pokeapi.co/api/v2/pokemon-species/"+p
-    entry_data, err := s.downloader.get_entry(entry_url)
-    if err != nil {
-        log.Print(err)
-        return
-    }
+	entry_url := "https://pokeapi.co/api/v2/pokemon-species/" + p
+	entry_data, err := s.downloader.get_entry(entry_url)
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
 	s.save_pokemon(api_data, entry_data, pid)
 }
@@ -212,7 +217,7 @@ func (s *Scraper) run() {
 func (s *Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
 	for p := range ch {
 		intVar, _ := strconv.Atoi(p)
-		s.handle_url("https://pokeapi.co/api/v2/pokemon/",p)
+		s.handle_url("https://pokeapi.co/api/v2/pokemon/", p)
 		wg.Done()
 	}
 }
