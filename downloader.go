@@ -22,6 +22,11 @@ type EntryAPIData struct {
 
 type Entry struct {
 	EntryText 		string `json:"flavor_text"`
+	EntryLan		EntryLan `json:"language"`
+}
+
+type EntryLan struct {
+	Name 			string
 }
 
 type Stat struct {
@@ -127,7 +132,7 @@ func (d Downloader) get_sprite(url string) ([]byte, error) {
 	return nil, errors.New("Something went wrong downloading sprites")
 }
 
-func (d Downloader) make_entry_request(url string) (PokemonAPIData, error) {
+func (d Downloader) make_entry_request(url string) (EntryAPIData, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return EntryAPIData{}, err

@@ -7,6 +7,7 @@ import (
 	"log"
 	"strconv"
 	"sync"
+    "strings"
 )
 
 var (
@@ -110,7 +111,13 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData, pid
 			speed = stat.BaseStat
 		}
 	}
-	entry := entry_data.Entries[0].EntryText
+	var entry string
+    for _, e  := range entry_data.Entries{
+        if e.EntryLan.Name == "en" {
+            entry = e.EntryText
+            break
+        }
+    }
 	entry = strings.ReplaceAll(entry, "\n", " ")
 	entry = strings.ReplaceAll(entry, "\u000c", " ")
 
@@ -167,7 +174,7 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData, pid
 
 }
 
-func (s *Scraper) handle_url(pid string) {
+func (s *Scraper) handle_url(p string) {
 	url := "https://pokeapi.co/api/v2/pokemon/" + p
 	api_data, err := s.downloader.get(url)
 	if err != nil {
@@ -180,6 +187,8 @@ func (s *Scraper) handle_url(pid string) {
 		log.Print(err)
 		return
 	}
+
+    pid, _ := strconv.Atoi(p)
 
 	s.save_pokemon(api_data, entry_data, pid)
 }
@@ -216,8 +225,7 @@ func (s *Scraper) run() {
 
 func (s *Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
 	for p := range ch {
-		intVar, _ := strconv.Atoi(p)
-		s.handle_url("https://pokeapi.co/api/v2/pokemon/", p)
+		s.handle_url(p)
 		wg.Done()
 	}
 }
@@ -231,12 +239,14 @@ func insertPokemon(pokemon_results []NewPokemon) {
 	notfound := NewPokemon{
 		Pokemon_id: 0,
 		Name:       "Not Found",
+        Entry:      "Pokemon not found. Please check id or pokemon name",
 	}
 	pokemon_results = append(pokemon_results, notfound)
 
+
 	result := db.Create(&pokemon_results)
 	if result.Error != nil {
-		log.Print((err))
+		log.Print(result.Error)
 	}
 }
 
@@ -248,7 +258,7 @@ func insertMaxStats(max_stats MaxStats) {
 
 	result := db.Create(&max_stats)
 	if result.Error != nil {
-		log.Print((err))
+		log.Print(result.Error)
 	}
 }
 
@@ -260,7 +270,7 @@ func insertTypeName(type_names []TypeName) {
 
 	result := db.Create(&type_names)
 	if result.Error != nil {
-		log.Print((err))
+		log.Print(result.Error)
 	}
 }
 

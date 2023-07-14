@@ -82,7 +82,7 @@ func main() {
 	var termPokemon SearchPokemon
 	currentPokemon, types := getPokemon("25")
 
-    maxStats := getMaxStats()
+	maxStats := getMaxStats()
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
@@ -130,6 +130,14 @@ func main() {
 
 		ui.Render(n)
 
+		e := widgets.NewParagraph()
+		// n.Title = "Entry"
+		e.Text = "[" + cases.Title(language.English).String(currentPokemon.Entry) + "](fg:cyan,mod:bold)"
+		e.SetRect(image_width+2, 8, termWidth, 13)
+		e.Border = false
+
+		ui.Render(e)
+
 		stats_table := widgets.NewTable()
 		stats_table.Rows = [][]string{
 			[]string{"HP", "Attack", "Defense", "S Attack", "S Defense", "Speed"},
@@ -140,52 +148,55 @@ func main() {
 		stats_table.TextAlignment = ui.AlignCenter
 		// stats_table.RowSeparator = false
 		stats_table.Border = false
-		stats_table.SetRect(image_width, 10, termWidth, 20)
+		stats_table.SetRect(image_width, 13, termWidth, 18)
 
 		ui.Render(stats_table)
 
 		type_title := widgets.NewParagraph()
 		// type_title.Title = "type_title"
-		type_title.Text = "[" + "Types" + "](fg:cyan,mod:bold)"
-		type_title.SetRect((termWidth-image_width)/2+image_width, 15, termWidth, 18)
+		type_title.Text = "[" + "Types" + "](fg:yellow,mod:bold)"
+		type_title.SetRect((termWidth-image_width)/2+image_width, 18, termWidth, 21)
 		type_title.Border = false
 
-        if len(types) == 1 {
-            type_data := widgets.NewParagraph()
-            // type_title.Title = "type_title"
-            type_data.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:yellow,mod:bold)"
-            type_data.SetRect((termWidth-image_width)/2+image_width, 19, termWidth, 22)
-            type_data.Border = false
-            ui.Render(type_data)
-        } else {
-            type_data1 := widgets.NewParagraph()
-            // type_title.Title = "type_title"
-            type_data1.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:magenta,mod:bold)"
-            type_data1.SetRect((termWidth-image_width)/4+image_width, 19, (termWidth-image_width)/2+image_width, 22)
-            type_data1.Border = false
+		type_rewrite := widgets.NewParagraph()
+		type_rewrite.SetRect(image_width, 21, termWidth, 24)
+		type_rewrite.Border = false
+		ui.Render(type_rewrite)
 
-            type_data2 := widgets.NewParagraph()
-            // type_title.Title = "type_title"
-            type_data2.Text = "[" + cases.Title(language.English).String(types[1]) + "](fg:magenta,mod:bold)"
-            type_data2.SetRect(((termWidth-image_width)/4*3)+image_width, 19, termWidth, 22)
-            type_data2.Border = false
+		if len(types) == 1 {
+			type_data := widgets.NewParagraph()
+			// type_title.Title = "type_title"
+			type_data.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:cyan,mod:bold)"
+			type_data.SetRect((termWidth-image_width)/2+image_width, 21, termWidth, 24)
+			type_data.Border = false
+			ui.Render(type_data)
+		} else {
+			type_data1 := widgets.NewParagraph()
+			// type_title.Title = "type_title"
+			type_data1.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:cyan,mod:bold)"
+			type_data1.SetRect((termWidth-image_width)/4+image_width, 21, (termWidth-image_width)/2+image_width, 24)
+			type_data1.Border = false
 
-            ui.Render(type_data1, type_data2)
+			type_data2 := widgets.NewParagraph()
+			// type_title.Title = "type_title"
+			type_data2.Text = "[" + cases.Title(language.English).String(types[1]) + "](fg:cyan,mod:bold)"
+			type_data2.SetRect(((termWidth-image_width)/4*3)+image_width, 21, termWidth, 24)
+			type_data2.Border = false
 
-        }
+			ui.Render(type_data1, type_data2)
 
-
+		}
 
 		height := widgets.NewParagraph()
 		// height.Title = "Height"
 		height.Text = "[" + "Height: " + "](fg:blue)[" + strconv.Itoa(currentPokemon.Height) + "](fg:red,mod:bold)"
-		height.SetRect((termWidth-image_width)/4+image_width, 23, (termWidth-image_width)/2+image_width, 28)
+		height.SetRect((termWidth-image_width)/4+image_width, 24, (termWidth-image_width)/2+image_width, 27)
 		height.Border = false
 
 		weight := widgets.NewParagraph()
 		// weight.Title = "Height"
 		weight.Text = "[" + "Weight: " + "](fg:red)[" + strconv.Itoa(currentPokemon.Weight) + "](fg:blue,mod:bold)"
-		weight.SetRect(((termWidth-image_width)/4*3)+image_width, 23, termWidth, 28)
+		weight.SetRect(((termWidth-image_width)/4*3)+image_width, 24, termWidth, 27)
 		weight.Border = false
 
 		ui.Render(n, type_title, height, weight)
@@ -199,42 +210,42 @@ func main() {
 		hp := NewGauge()
 		hp.Title = "HP"
 		hp.SetRect(image_width, termHeight-24, termWidth, termHeight-20)
-		hp.Percent = currentPokemon.HP*100/maxStats.HP
+		hp.Percent = currentPokemon.HP * 100 / maxStats.HP
 		hp.BarColor = ui.ColorGreen
 		hp.Border = false
 
 		attack := NewGauge()
 		attack.Title = "Attack"
 		attack.SetRect(image_width, termHeight-20, termWidth, termHeight-16)
-		attack.Percent = currentPokemon.Attack*100/maxStats.Attack
+		attack.Percent = currentPokemon.Attack * 100 / maxStats.Attack
 		attack.BarColor = ui.ColorRed
 		attack.Border = false
 
 		defense := NewGauge()
 		defense.Title = "Defense"
 		defense.SetRect(image_width, termHeight-16, termWidth, termHeight-12)
-		defense.Percent = currentPokemon.Defense*100/maxStats.Defense
+		defense.Percent = currentPokemon.Defense * 100 / maxStats.Defense
 		defense.BarColor = ui.ColorBlue
 		defense.Border = false
 
 		special_attack := NewGauge()
 		special_attack.Title = "Special Attack"
 		special_attack.SetRect(image_width, termHeight-12, termWidth, termHeight-8)
-		special_attack.Percent = currentPokemon.Special_defense*100/maxStats.Special_defense
+		special_attack.Percent = currentPokemon.Special_defense * 100 / maxStats.Special_defense
 		special_attack.BarColor = ui.ColorMagenta
 		special_attack.Border = false
 
 		special_defense := NewGauge()
 		special_defense.Title = "Special Defense"
 		special_defense.SetRect(image_width, termHeight-8, termWidth, termHeight-4)
-		special_defense.Percent = currentPokemon.Special_attack*100/maxStats.Special_attack
+		special_defense.Percent = currentPokemon.Special_attack * 100 / maxStats.Special_attack
 		special_defense.BarColor = ui.ColorCyan
 		special_defense.Border = false
 
 		speed := NewGauge()
 		speed.Title = "Speed"
 		speed.SetRect(image_width, termHeight-4, termWidth, termHeight)
-		speed.Percent = currentPokemon.Speed*100/maxStats.Speed
+		speed.Percent = currentPokemon.Speed * 100 / maxStats.Speed
 		speed.BarColor = ui.ColorYellow
 		speed.Border = false
 
@@ -300,7 +311,8 @@ func createTable(db *sql.DB) {
         "defense" integer NOT NULL,
         "special_attack" integer NOT NULL,
         "special_defense" integer NOT NULL,
-        "speed" integer NOT NULL
+        "speed" integer NOT NULL,
+        "entry" TEXT NOT NULL
       );` // SQL Statement for Create Table
 
 	log.Println("Create pokemon table...")
@@ -400,18 +412,18 @@ func getPokemon(search string) (NewPokemon, []string) {
 }
 
 func getMaxStats() MaxStats {
-    db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{
-        Logger: logger.Default.LogMode(logger.Silent),
-    })
-    if err != nil {
-        panic("failed to connect database")
-    }
-    var maxStats MaxStats
-    result := db.First(&maxStats)
-    if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-        panic("No max stats value")
-    }
-    return maxStats
+	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	var maxStats MaxStats
+	result := db.First(&maxStats)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		panic("No max stats value")
+	}
+	return maxStats
 
 }
 
