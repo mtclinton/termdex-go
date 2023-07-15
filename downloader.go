@@ -100,38 +100,6 @@ func (d Downloader) get(url string) (PokemonAPIData, error) {
 	return PokemonAPIData{}, errors.New("Something went wrong downloading")
 }
 
-func (d Downloader) make_sprite_request(url string) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	res, getErr := d.client.Do(req)
-	if getErr != nil {
-		return nil, getErr
-	}
-	if res.Body != nil {
-		defer res.Body.Close()
-	}
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		return nil, readErr
-	}
-	return body, nil
-}
-
-func (d Downloader) get_sprite(url string) ([]byte, error) {
-	for i := 0; i < d.tries; i++ {
-		sprite_data, err := d.make_sprite_request(url)
-		if err == nil {
-			return sprite_data, nil
-		}
-		if i+1 == d.tries {
-			return nil, err
-		}
-	}
-	return nil, errors.New("Something went wrong downloading sprites")
-}
-
 func (d Downloader) make_entry_request(url string) (EntryAPIData, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
