@@ -6,7 +6,6 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
 	"image"
 	_ "image/png"
 	"log"
