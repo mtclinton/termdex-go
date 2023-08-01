@@ -17,16 +17,16 @@ type PokemonAPIData struct {
 }
 
 type EntryAPIData struct {
-	Entries          []Entry `json:"flavor_text_entries"`
+	Entries []Entry `json:"flavor_text_entries"`
 }
 
 type Entry struct {
-	EntryText 		string `json:"flavor_text"`
-	EntryLan		EntryLan `json:"language"`
+	EntryText string   `json:"flavor_text"`
+	EntryLan  EntryLan `json:"language"`
 }
 
 type EntryLan struct {
-	Name 			string
+	Name string
 }
 
 type Stat struct {
