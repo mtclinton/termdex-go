@@ -34,7 +34,7 @@ func setup() func() {
 	}
 }
 
-func TestPokemon(t *testing.T) {
+func TestPokemonAPI(t *testing.T) {
 
 	teardown := setup()
 	defer teardown()
@@ -63,10 +63,45 @@ func TestPokemon(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
+	assert.Equal(t, "bulbasaur", apiData.Name)
+	assert.Equal(t, 64, apiData.BaseExperience)
+	assert.Equal(t, 7, apiData.Height)
+	assert.Equal(t, 69, apiData.Weight)
+	var types [2]string
+	types[0] = "grass"
+	types[1] = "poison"
+	assert.Contains(t, types, apiData.Types[0].TypeDetail.Name)
+
+}
+
+func TestPokemonEntry(t *testing.T) {
+	teardown := setup()
+	defer teardown()
+
+	jsonFile, err := os.Open("pokemon_entry_test.json")
 	if err != nil {
 		log.Println(err)
 	}
-	assert.Equal(t, "bulbasaur", apiData.Name)
+	defer jsonFile.Close()
+
+	pokemon_bytes, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Println(err)
+	}
+	var pokemon_test_response PokemonEntryTestStruct
+	json.Unmarshal(pokemon_bytes, &pokemon_test_response)
+
+	mux.HandleFunc("/pokemon-species/1", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(pokemon_test_response)
+	})
+	downloader := NewDownloader(3)
+	_, err = downloader.get("http://localhost:8082/pokemon-species/1")
+	if err != nil {
+		log.Println(err)
+	}
+
 }
 
 type PokemonTestStruct struct {
@@ -311,4 +346,95 @@ type PokemonTestStruct struct {
 		} `json:"type"`
 	} `json:"types"`
 	Weight int `json:"weight"`
+}
+
+type PokemonEntryTestStruct struct {
+	BaseHappiness int `json:"base_happiness"`
+	CaptureRate   int `json:"capture_rate"`
+	Color         struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"color"`
+	EggGroups []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"egg_groups"`
+	EvolutionChain struct {
+		URL string `json:"url"`
+	} `json:"evolution_chain"`
+	EvolvesFromSpecies interface{} `json:"evolves_from_species"`
+	FlavorTextEntries  []struct {
+		FlavorText string `json:"flavor_text"`
+		Language   struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+		Version struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"version"`
+	} `json:"flavor_text_entries"`
+	FormDescriptions []interface{} `json:"form_descriptions"`
+	FormsSwitchable  bool          `json:"forms_switchable"`
+	GenderRate       int           `json:"gender_rate"`
+	Genera           []struct {
+		Genus    string `json:"genus"`
+		Language struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+	} `json:"genera"`
+	Generation struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"generation"`
+	GrowthRate struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"growth_rate"`
+	Habitat struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"habitat"`
+	HasGenderDifferences bool   `json:"has_gender_differences"`
+	HatchCounter         int    `json:"hatch_counter"`
+	ID                   int    `json:"id"`
+	IsBaby               bool   `json:"is_baby"`
+	IsLegendary          bool   `json:"is_legendary"`
+	IsMythical           bool   `json:"is_mythical"`
+	Name                 string `json:"name"`
+	Names                []struct {
+		Language struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+		Name string `json:"name"`
+	} `json:"names"`
+	Order             int `json:"order"`
+	PalParkEncounters []struct {
+		Area struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"area"`
+		BaseScore int `json:"base_score"`
+		Rate      int `json:"rate"`
+	} `json:"pal_park_encounters"`
+	PokedexNumbers []struct {
+		EntryNumber int `json:"entry_number"`
+		Pokedex     struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"pokedex"`
+	} `json:"pokedex_numbers"`
+	Shape struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"shape"`
+	Varieties []struct {
+		IsDefault bool `json:"is_default"`
+		Pokemon   struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"pokemon"`
+	} `json:"varieties"`
 }
