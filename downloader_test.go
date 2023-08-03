@@ -1,15 +1,15 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
+    "fmt"
+    "strings"
 )
 
 var (
@@ -34,28 +34,24 @@ func setup() func() {
 	}
 }
 
+func fixture(path string) string {
+    b, err := ioutil.ReadFile("testdata/fixtures/" + path)
+    if err != nil {
+        panic(err)
+    }
+    return string(b)
+}
+
 func TestPokemonAPI(t *testing.T) {
 
 	teardown := setup()
 	defer teardown()
 
-	jsonFile, err := os.Open("pokemon_test.json")
-	if err != nil {
-		log.Println(err)
-	}
-	defer jsonFile.Close()
-
-	pokemon_bytes, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		log.Println(err)
-	}
-	var pokemon_test_response PokemonTestStruct
-	json.Unmarshal(pokemon_bytes, &pokemon_test_response)
 
 	mux.HandleFunc("/pokemon/1", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(pokemon_test_response)
+        fmt.Fprint(w, fixture("pokemon_test.json"))
 	})
 
 	downloader := NewDownloader(3)
@@ -78,30 +74,27 @@ func TestPokemonEntry(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-	jsonFile, err := os.Open("pokemon_entry_test.json")
-	if err != nil {
-		log.Println(err)
-	}
-	defer jsonFile.Close()
-
-	pokemon_bytes, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		log.Println(err)
-	}
-	var pokemon_test_response PokemonEntryTestStruct
-	json.Unmarshal(pokemon_bytes, &pokemon_test_response)
-
 	mux.HandleFunc("/pokemon-species/1", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(pokemon_test_response)
+        fmt.Fprint(w, fixture("pokemon_entry_test.json"))
 	})
 	downloader := NewDownloader(3)
-	_, err = downloader.get("http://localhost:8082/pokemon-species/1")
+	apiData, err := downloader.get_entry("http://localhost:8082/pokemon-species/1")
 	if err != nil {
 		log.Println(err)
 	}
-
+    var entry string
+    for _, e  := range apiData.Entries{
+        if e.EntryLan.Name == "en" {
+            entry = e.EntryText
+            break
+        }
+    }
+    entry = strings.ReplaceAll(entry, "\n", " ")
+    entry = strings.ReplaceAll(entry, "\u000c", " ")
+    expected := "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
+    assert.Equal(t, expected, entry)
 }
 
 type PokemonTestStruct struct {
