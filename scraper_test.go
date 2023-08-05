@@ -55,5 +55,9 @@ func TestScraper(t *testing.T) {
 	scraper := NewScraper()
 	scraper.save_pokemon(pokemon_data, entry_data, 1)
 	assert.Equal(t, "bulbasaur", scraper.pokemon_data[0].Name)
+	assert.Equal(t, 1, scraper.pokemon_data[0].Pokemon_id)
+	assert.Equal(t, 7, scraper.pokemon_data[0].Height)
+	assert.Equal(t, 49, scraper.pokemon_data[0].Attack)
+	assert.Equal(t, "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.", scraper.pokemon_data[0].Entry)
 
 }
