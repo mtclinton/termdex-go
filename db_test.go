@@ -41,6 +41,46 @@ func run(m *testing.M) (code int, err error) {
 	return m.Run(), nil
 }
 
+func TestInsertPokemon(t *testing.T) {
+	pokemon := NewPokemon{
+		ID:              1,
+		Pokemon_id:      1,
+		Name:            "bulbasaur",
+		Base_experience: 2,
+		Height:          3,
+		Weight:          4,
+		HP:              5,
+		Attack:          6,
+		Defense:         7,
+		Special_attack:  8,
+		Special_defense: 9,
+		Speed:           10,
+		Entry:           "tst entry",
+	}
+
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		log.Print((err))
+	}
+
+	result := db.Create(&pokemon)
+	if result.Error != nil {
+		log.Print(result.Error)
+	}
+
+	// using https://github.com/stretchr/testify library for brevity
+	require.NoError(t, err)
+
+	var p NewPokemon
+	result = db.First(&p)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		panic("No type name value")
+	}
+
+	assert.Equal(t, 1, p.Pokemon_id)
+	assert.Equal(t, "bulbasaur", p.Name)
+}
+
 func TestInsertMaxStats(t *testing.T) {
 	max_stats := MaxStats{
 		1, 2, 3, 4, 5, 6, 7,
