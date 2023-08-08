@@ -74,6 +74,35 @@ func TestInsertMaxStats(t *testing.T) {
 
 }
 
+func TestInsertPokemonType(t *testing.T) {
+	pokemon_type := PokemonType{
+		Pokemon_id: 1,
+		Type_id:    1,
+	}
+
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		log.Print((err))
+	}
+
+	result := db.Create(&pokemon_type)
+	if result.Error != nil {
+		log.Print(result.Error)
+	}
+
+	// using https://github.com/stretchr/testify library for brevity
+	require.NoError(t, err)
+
+	var pt PokemonType
+	result = db.First(&pt)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		panic("No type name value")
+	}
+
+	assert.Equal(t, 1, pt.Pokemon_id)
+	assert.Equal(t, 1, pt.Type_id)
+}
+
 func TestInsertTypeName(t *testing.T) {
 	type_name := TypeName{
 		Name: "grass",
