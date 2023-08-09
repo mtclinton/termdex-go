@@ -69,13 +69,13 @@ func main() {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
-	loadDB()
-	initializePokemon()
+	pokemon_db, _ := loadDB("pokemon.db")
+	pokemon_db.initializePokemon()
 
 	var termPokemon SearchPokemon
-	currentPokemon, types := getPokemon("25")
+	currentPokemon, types := pokemon_db.getPokemon("25")
 
-	maxStats := getMaxStats()
+	maxStats := pokemon_db.getMaxStats()
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
@@ -261,7 +261,7 @@ func main() {
 			}
 
 		case "<Enter>":
-			currentPokemon, types = getPokemon(termPokemon.search)
+			currentPokemon, types = pokemon_db.getPokemon(termPokemon.search)
 			termPokemon.search = ""
 			drawInput()
 			draw()

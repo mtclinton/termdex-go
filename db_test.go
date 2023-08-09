@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/stretchr/testify/assert"
@@ -23,19 +22,15 @@ func TestMain(m *testing.M) {
 
 func run(m *testing.M) (code int, err error) {
 
-	db, err := sql.Open("sqlite3", "file:test.db?cache=shared")
-	if err != nil {
-		return -1, fmt.Errorf("could not connect to database: %w", err)
-	}
-
-	createTable(db)
+	poke_db, _ := loadDB("test.db")
+	poke_db.createTable()
 	defer func() {
-		db.Exec(fmt.Sprintf("DELETE FROM pokemon"))
-		db.Exec(fmt.Sprintf("DELETE FROM max_stats"))
-		db.Exec(fmt.Sprintf("DELETE FROM pokemon_type"))
-		db.Exec(fmt.Sprintf("DELETE FROM type_name"))
+		poke_db.db.Exec(fmt.Sprintf("DELETE FROM pokemon"))
+		poke_db.db.Exec(fmt.Sprintf("DELETE FROM max_stats"))
+		poke_db.db.Exec(fmt.Sprintf("DELETE FROM pokemon_type"))
+		poke_db.db.Exec(fmt.Sprintf("DELETE FROM type_name"))
+		os.Remove("test.db")
 
-		db.Close()
 	}()
 
 	return m.Run(), nil
@@ -57,25 +52,13 @@ func TestInsertPokemon(t *testing.T) {
 		Speed:           10,
 		Entry:           "tst entry",
 	}
+	var pokemon_data []NewPokemon
+	pokemon_data = append(pokemon_data, pokemon)
 
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
+	pkd, _ := loadDB("test.db")
+	pkd.insertPokemon(pokemon_data)
 
-	result := db.Create(&pokemon)
-	if result.Error != nil {
-		log.Print(result.Error)
-	}
-
-	// using https://github.com/stretchr/testify library for brevity
-	require.NoError(t, err)
-
-	var p NewPokemon
-	result = db.First(&p)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		panic("No type name value")
-	}
+	p, _ := pkd.getPokemon("bulbasaur")
 
 	assert.Equal(t, 1, p.Pokemon_id)
 	assert.Equal(t, "bulbasaur", p.Name)
@@ -86,24 +69,10 @@ func TestInsertMaxStats(t *testing.T) {
 		1, 2, 3, 4, 5, 6, 7,
 	}
 
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
+	pkd, _ := loadDB("test.db")
+	pkd.insertMaxStats(max_stats)
 
-	result := db.Create(&max_stats)
-	if result.Error != nil {
-		log.Print(result.Error)
-	}
-
-	// using https://github.com/stretchr/testify library for brevity
-	require.NoError(t, err)
-
-	var ms MaxStats
-	result = db.First(&ms)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		panic("No max stats value")
-	}
+	ms := pkd.getMaxStats()
 
 	assert.Equal(t, 2, ms.HP)
 	assert.Equal(t, 3, ms.Attack)

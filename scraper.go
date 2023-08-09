@@ -6,8 +6,8 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"strconv"
+	"strings"
 	"sync"
-    "strings"
 )
 
 var (
@@ -112,12 +112,12 @@ func (s *Scraper) save_pokemon(data PokemonAPIData, entry_data EntryAPIData, pid
 		}
 	}
 	var entry string
-    for _, e  := range entry_data.Entries{
-        if e.EntryLan.Name == "en" {
-            entry = e.EntryText
-            break
-        }
-    }
+	for _, e := range entry_data.Entries {
+		if e.EntryLan.Name == "en" {
+			entry = e.EntryText
+			break
+		}
+	}
 	entry = strings.ReplaceAll(entry, "\n", " ")
 	entry = strings.ReplaceAll(entry, "\u000c", " ")
 
@@ -188,7 +188,7 @@ func (s *Scraper) handle_url(p string) {
 		return
 	}
 
-    pid, _ := strconv.Atoi(p)
+	pid, _ := strconv.Atoi(p)
 
 	s.save_pokemon(api_data, entry_data, pid)
 }
@@ -239,10 +239,9 @@ func insertPokemon(pokemon_results []NewPokemon) {
 	notfound := NewPokemon{
 		Pokemon_id: 0,
 		Name:       "Not Found",
-        Entry:      "Pokemon not found. Please check id or pokemon name",
+		Entry:      "Pokemon not found. Please check id or pokemon name",
 	}
 	pokemon_results = append(pokemon_results, notfound)
-
 
 	result := db.Create(&pokemon_results)
 	if result.Error != nil {
