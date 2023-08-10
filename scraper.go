@@ -2,8 +2,6 @@ package main
 
 import (
 	"golang.org/x/exp/slices"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 	"log"
 	"strconv"
 	"strings"
@@ -18,7 +16,7 @@ var (
 )
 
 type NewPokemon struct {
-	ID              uint `gorm:"primarykey"	`
+	ID              uint `gorm:"primarykey" `
 	Pokemon_id      int
 	Name            string
 	Base_experience int
@@ -79,17 +77,18 @@ func (MaxStats) TableName() string {
 type Scraper struct {
 	wg           sync.WaitGroup
 	mu           sync.Mutex
-	balance      int
 	downloader   Downloader
 	pokemon_data []NewPokemon
 	maxstats     MaxStats
 	type_names   []TypeName
 	tpt          []TypePokeTracker
+	pokemon_db   *PokeDB
 }
 
-func NewScraper() Scraper {
+func NewScraper(pokemon_db *PokeDB) Scraper {
 	return Scraper{
 		downloader: NewDownloader(3),
+		pokemon_db: pokemon_db,
 	}
 }
 
@@ -216,10 +215,10 @@ func (s *Scraper) run() {
 	}
 
 	s.wg.Wait()
-	insertPokemon(s.pokemon_data)
-	insertMaxStats(s.maxstats)
-	insertTypeName(s.type_names)
-	insertPokeType(s.tpt)
+	s.pokemon_db.insertPokemon(s.pokemon_data)
+	s.pokemon_db.insertMaxStats(s.maxstats)
+	s.pokemon_db.insertTypeName(s.type_names)
+	s.pokemon_db.insertPokeType(s.tpt)
 
 }
 
@@ -227,78 +226,5 @@ func (s *Scraper) pokeHandler(ch chan string, wg *sync.WaitGroup) {
 	for p := range ch {
 		s.handle_url(p)
 		wg.Done()
-	}
-}
-
-func insertPokemon(pokemon_results []NewPokemon) {
-	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
-
-	notfound := NewPokemon{
-		Pokemon_id: 0,
-		Name:       "Not Found",
-		Entry:      "Pokemon not found. Please check id or pokemon name",
-	}
-	pokemon_results = append(pokemon_results, notfound)
-
-	result := db.Create(&pokemon_results)
-	if result.Error != nil {
-		log.Print(result.Error)
-	}
-}
-
-func insertMaxStats(max_stats MaxStats) {
-	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
-
-	result := db.Create(&max_stats)
-	if result.Error != nil {
-		log.Print(result.Error)
-	}
-}
-
-func insertTypeName(type_names []TypeName) {
-	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
-
-	result := db.Create(&type_names)
-	if result.Error != nil {
-		log.Print(result.Error)
-	}
-}
-
-func insertPokeType(type_poke_tracker []TypePokeTracker) {
-	db, err := gorm.Open(sqlite.Open("pokemon.db"), &gorm.Config{})
-	if err != nil {
-		log.Print((err))
-	}
-	var type_names []TypeName
-	type_name_results := db.Find(&type_names)
-	if type_name_results.Error != nil {
-		log.Print((err))
-	}
-
-	var poke_types []PokemonType
-	for _, tracker := range type_poke_tracker {
-		tid := slices.IndexFunc(type_names, func(tn TypeName) bool { return tn.Name == tracker.Name })
-		if tid == -1 {
-			log.Panic(("Unknown Type"))
-		}
-		idx := int(tid)
-		poke_type := PokemonType{
-			Pokemon_id: tracker.Pokemon_id,
-			Type_id:    int(type_names[idx].ID),
-		}
-		poke_types = append(poke_types, poke_type)
-	}
-	result := db.Create(&poke_types)
-	if result.Error != nil {
-		log.Print((err))
 	}
 }

@@ -52,7 +52,9 @@ func TestScraper(t *testing.T) {
 		},
 	}
 
-	scraper := NewScraper()
+	poke_db, _ := loadDB("test.db")
+
+	scraper := NewScraper(poke_db)
 	scraper.save_pokemon(pokemon_data, entry_data, 1)
 	assert.Equal(t, "bulbasaur", scraper.pokemon_data[0].Name)
 	assert.Equal(t, 1, scraper.pokemon_data[0].Pokemon_id)

@@ -25,10 +25,10 @@ func run(m *testing.M) (code int, err error) {
 	poke_db, _ := loadDB("test.db")
 	poke_db.createTable()
 	defer func() {
-		poke_db.db.Exec(fmt.Sprintf("DELETE FROM pokemon"))
-		poke_db.db.Exec(fmt.Sprintf("DELETE FROM max_stats"))
-		poke_db.db.Exec(fmt.Sprintf("DELETE FROM pokemon_type"))
-		poke_db.db.Exec(fmt.Sprintf("DELETE FROM type_name"))
+		poke_db.db.Exec("DELETE FROM pokemon")
+		poke_db.db.Exec("DELETE FROM max_stats")
+		poke_db.db.Exec("DELETE FROM pokemon_type")
+		poke_db.db.Exec("DELETE FROM type_name")
 		os.Remove("test.db")
 
 	}()

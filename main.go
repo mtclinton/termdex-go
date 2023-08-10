@@ -14,8 +14,6 @@ import (
 	"strings"
 )
 
-var grid *ui.Grid
-
 const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 type SearchPokemon struct {

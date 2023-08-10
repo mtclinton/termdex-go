@@ -1,20 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
-    "fmt"
-    "strings"
 )
 
 var (
-	mux    *http.ServeMux
-	server *httptest.Server
+	mux *http.ServeMux
 )
 
 func setup() func() {
@@ -35,11 +34,11 @@ func setup() func() {
 }
 
 func fixture(path string) string {
-    b, err := ioutil.ReadFile("testdata/fixtures/" + path)
-    if err != nil {
-        panic(err)
-    }
-    return string(b)
+	b, err := ioutil.ReadFile("testdata/fixtures/" + path)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }
 
 func TestPokemonAPI(t *testing.T) {
@@ -47,11 +46,10 @@ func TestPokemonAPI(t *testing.T) {
 	teardown := setup()
 	defer teardown()
 
-
 	mux.HandleFunc("/pokemon/1", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-        fmt.Fprint(w, fixture("pokemon_test.json"))
+		fmt.Fprint(w, fixture("pokemon_test.json"))
 	})
 
 	downloader := NewDownloader(3)
@@ -77,24 +75,24 @@ func TestPokemonEntry(t *testing.T) {
 	mux.HandleFunc("/pokemon-species/1", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-        fmt.Fprint(w, fixture("pokemon_entry_test.json"))
+		fmt.Fprint(w, fixture("pokemon_entry_test.json"))
 	})
 	downloader := NewDownloader(3)
 	apiData, err := downloader.get_entry("http://localhost:8082/pokemon-species/1")
 	if err != nil {
 		log.Println(err)
 	}
-    var entry string
-    for _, e  := range apiData.Entries{
-        if e.EntryLan.Name == "en" {
-            entry = e.EntryText
-            break
-        }
-    }
-    entry = strings.ReplaceAll(entry, "\n", " ")
-    entry = strings.ReplaceAll(entry, "\u000c", " ")
-    expected := "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
-    assert.Equal(t, expected, entry)
+	var entry string
+	for _, e := range apiData.Entries {
+		if e.EntryLan.Name == "en" {
+			entry = e.EntryText
+			break
+		}
+	}
+	entry = strings.ReplaceAll(entry, "\n", " ")
+	entry = strings.ReplaceAll(entry, "\u000c", " ")
+	expected := "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
+	assert.Equal(t, expected, entry)
 }
 
 type PokemonTestStruct struct {

@@ -38,7 +38,7 @@ func loadDB(db_name string) (*PokeDB, error) {
 
 func (pkd *PokeDB) createTable() {
 	createPokemonTableSQL := `CREATE TABLE IF NOT EXISTS pokemon (
-        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "pokemon_id" integer NOT NULL,
         "name" TEXT NOT NULL,
         "base_experience" integer NOT NULL,
@@ -61,7 +61,7 @@ func (pkd *PokeDB) createTable() {
 	log.Println("Pokemon table created")
 
 	createMaxStatsTableSQL := `CREATE TABLE IF NOT EXISTS max_stats (
-        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "hp" integer NOT NULL,
         "attack" integer NOT NULL,
         "defense" integer NOT NULL,
@@ -78,7 +78,7 @@ func (pkd *PokeDB) createTable() {
 	log.Println("Max stats table created")
 
 	createPokemonTypeTableSQL := `CREATE TABLE IF NOT EXISTS pokemon_type (
-        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "pokemon_id" integer NOT NULL,
         "type_id" integer NOT NULL
       );` // SQL Statement for Create Table
@@ -91,7 +91,7 @@ func (pkd *PokeDB) createTable() {
 	log.Println("Pokemon type table created")
 
 	createTypeNameTableSQL := `CREATE TABLE IF NOT EXISTS type_name (
-        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,     
+        "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
         "name" TEXT NOT NULL,
         "url" TEXT NOT NULL
       );` // SQL Statement for Create Table
@@ -155,7 +155,7 @@ func (pkd *PokeDB) initializePokemon() {
 	pkd.db.Table("pokemon").Count(&count)
 	if count == 0 {
 		fmt.Println("Initializing pokemon")
-		s := NewScraper()
+		s := NewScraper(pkd)
 		s.run()
 	}
 
