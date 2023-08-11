@@ -3,13 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/exp/slices"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 	"log"
 	"os"
 	"reflect"
 	"strconv"
+
+	"golang.org/x/exp/slices"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type PokeDB struct {

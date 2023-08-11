@@ -1,11 +1,12 @@
 package main
 
 import (
-	"golang.org/x/exp/slices"
 	"log"
 	"strconv"
 	"strings"
 	"sync"
+
+	"golang.org/x/exp/slices"
 )
 
 var (

@@ -1,17 +1,18 @@
 package main
 
 import (
-	. "github.com/gizak/termui/v3"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"image"
 	_ "image/png"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	. "github.com/gizak/termui/v3"
+	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

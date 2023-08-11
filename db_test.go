@@ -3,13 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
-	"os"
-	"testing"
 )
 
 func TestMain(m *testing.M) {
