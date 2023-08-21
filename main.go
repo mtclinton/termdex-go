@@ -67,8 +67,8 @@ func main() {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
-	ui.Theme.Block.Border = ui.NewStyle(ui.Color(ui.ColorRed))
-	ui.Theme.Block.Title = ui.NewStyle(ui.Color(ui.ColorRed))
+	ui.Theme.Block.Border = ui.NewStyle(ui.Color(ui.ColorMagenta))
+	ui.Theme.Block.Title = ui.NewStyle(ui.Color(ui.ColorMagenta))
 	defer ui.Close()
 	pokemon_db, _ := loadDB("pokemon.db")
 	pokemon_db.initializePokemon()
@@ -131,7 +131,6 @@ func main() {
 
 		height := widgets.NewParagraph()
 		height.Title = "Height"
-		// height.Text = "[" + strconv.Itoa(currentPokemon.Height) + "](fg:yellow,mod:bold)"
 		height.SetRect(image_width+2, 13, (termWidth-image_width)/2+image_width-2, 19)
 
 		height_text := widgets.NewParagraph()
@@ -141,7 +140,6 @@ func main() {
 
 		weight := widgets.NewParagraph()
 		weight.Title = "Weight"
-		// weight.Text = "[" + strconv.Itoa(currentPokemon.Weight) + "](fg:yellow,mod:bold)"
 		weight.SetRect((termWidth-image_width)/2+image_width+2, 13, termWidth-2, 19)
 
 		weight_text := widgets.NewParagraph()
@@ -151,60 +149,38 @@ func main() {
 
 		ui.Render(height, height_text, weight, weight_text)
 
-		// stats_table := widgets.NewTable()
-		// stats_table.Rows = [][]string{
-		// 	[]string{"HP", "Attack", "Defense", "S Attack", "S Defense", "Speed"},
-		// 	[]string{strconv.Itoa(currentPokemon.HP), strconv.Itoa(currentPokemon.Attack), strconv.Itoa(currentPokemon.Defense),
-		// 		strconv.Itoa(currentPokemon.Special_attack), strconv.Itoa(currentPokemon.Special_defense), strconv.Itoa(currentPokemon.Speed)},
-		// }
-		// stats_table.TextStyle = ui.NewStyle(ui.ColorWhite)
-		// stats_table.TextAlignment = ui.AlignCenter
-		// // stats_table.RowSeparator = false
-		// stats_table.Border = false
-		// stats_table.SetRect(image_width, 13, termWidth, 18)
-
-		// ui.Render(stats_table)
-
-		// type_title := widgets.NewParagraph()
-		// // type_title.Title = "type_title"
-		// type_title.Text = "[" + "Types" + "](fg:yellow,mod:bold)"
-		// type_title.SetRect((termWidth-image_width)/2+image_width, 18, termWidth, 21)
-		// type_title.Border = false
-
-		// type_rewrite := widgets.NewParagraph()
-		// type_rewrite.SetRect(image_width, 21, termWidth, 24)
-		// type_rewrite.Border = false
-		// ui.Render(type_rewrite)
-
 		if len(types) == 1 {
+			type_border := widgets.NewParagraph()
+			type_border.Title = "Type"
+			type_border.SetRect((termWidth-image_width)/4+image_width, 21, (termWidth-image_width)*3/4+image_width, 26)
+
 			type_data := widgets.NewParagraph()
-			// type_title.Title = "type_title"
 			type_data.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:yellow,mod:bold)"
-			type_data.SetRect((termWidth-image_width)/2+image_width, 21, termWidth, 24)
+			type_data.SetRect((termWidth-image_width)/4+image_width+6, 22, (termWidth-image_width)*3/4+image_width-2, 25)
 			type_data.Border = false
-			// ui.Render(type_data)
+			ui.Render(type_border, type_data)
 		} else {
+			type_border1 := widgets.NewParagraph()
+			type_border1.Title = "Type"
+			type_border1.SetRect(image_width+2, 21, (termWidth-image_width)/2+image_width-2, 26)
+
 			type_data1 := widgets.NewParagraph()
-			// type_title.Title = "type_title"
-			type_data1.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:cyan,mod:bold)"
-			type_data1.SetRect((termWidth-image_width)/4+image_width, 21, (termWidth-image_width)/2+image_width, 24)
+			type_data1.Text = "[" + cases.Title(language.English).String(types[0]) + "](fg:yellow,mod:bold)"
+			type_data1.SetRect(((termWidth-image_width)/4)+image_width, 22, (termWidth-image_width)/2+image_width-3, 25)
 			type_data1.Border = false
 
+			type_border2 := widgets.NewParagraph()
+			type_border2.Title = "Type"
+			type_border2.SetRect((termWidth-image_width)/2+image_width+2, 21, termWidth-2, 26)
+
 			type_data2 := widgets.NewParagraph()
-			// type_title.Title = "type_title"
-			type_data2.Text = "[" + cases.Title(language.English).String(types[1]) + "](fg:cyan,mod:bold)"
-			type_data2.SetRect(((termWidth-image_width)/4*3)+image_width, 21, termWidth, 24)
+			type_data2.Text = "[" + cases.Title(language.English).String(types[1]) + "](fg:yellow,mod:bold)"
+			type_data2.SetRect(((termWidth-image_width)/4*3)+image_width, 22, termWidth-3, 25)
 			type_data2.Border = false
 
-			// 	ui.Render(type_data1, type_data2)
+			ui.Render(type_border1, type_border2, type_data1, type_data2)
 
 		}
-
-		// stats_title := widgets.NewParagraph()
-		// stats_title.Text = "[Stats](fg:green,mod:bold)"
-		// stats_title.SetRect((termWidth+image_width)/2, termHeight-27, termWidth, termHeight-24)
-		// stats_title.Border = false
-		// ui.Render(stats_title)
 
 		hp := NewGauge()
 		hp.Title = "HP"
