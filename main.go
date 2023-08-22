@@ -67,8 +67,8 @@ func main() {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
-	ui.Theme.Block.Border = ui.NewStyle(ui.Color(ui.ColorMagenta))
-	ui.Theme.Block.Title = ui.NewStyle(ui.Color(ui.ColorMagenta))
+	ui.Theme.Block.Border = ui.NewStyle(ui.Color(ui.ColorRed))
+	ui.Theme.Block.Title = ui.NewStyle(ui.Color(ui.ColorRed))
 	defer ui.Close()
 	pokemon_db, _ := loadDB("pokemon.db")
 	pokemon_db.initializePokemon()
