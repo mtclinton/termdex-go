@@ -11,6 +11,7 @@ import (
 	"golang.org/x/exp/slices"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type PokeDB struct {
@@ -27,7 +28,9 @@ func loadDB(db_name string) (*PokeDB, error) {
 		file.Close()
 		log.Printf("%s created", db_name)
 	}
-	sqliteDatabase, err := gorm.Open(sqlite.Open(db_name), &gorm.Config{})
+	sqliteDatabase, err := gorm.Open(sqlite.Open(db_name), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -113,12 +116,14 @@ func (pkd PokeDB) getPokemon(search string) (NewPokemon, []string) {
 	if _, err := strconv.Atoi(search); err == nil {
 		result := pkd.db.Where("pokemon_id = ?", search).First(&pokemon)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			pkd.db.Where("name = ").First(&pokemon)
+			pokemon.Name = "Not Found"
+			pokemon.Entry = "Pokemon not found. Try searching again"
 		}
 	} else {
 		result := pkd.db.Where("name = ?", search).First(&pokemon)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			pkd.db.Where("name = ").First(&pokemon)
+			pokemon.Name = "Not Found"
+			pokemon.Entry = "Pokemon not found. Try searching again"
 		}
 	}
 	types_result := pkd.db.Where("pokemon_id = ?", pokemon.Pokemon_id).Find(&pokemon_types)

@@ -159,7 +159,8 @@ func main() {
 			type_data.SetRect((termWidth-image_width)/4+image_width+6, 22, (termWidth-image_width)*3/4+image_width-2, 25)
 			type_data.Border = false
 			ui.Render(type_border, type_data)
-		} else {
+		}
+		if len(types) == 2 {
 			type_border1 := widgets.NewParagraph()
 			type_border1.Title = "Type"
 			type_border1.SetRect(image_width+2, 21, (termWidth-image_width)/2+image_width-2, 26)
