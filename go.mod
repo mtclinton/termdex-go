@@ -2,7 +2,6 @@ module termdex-go
 
 go 1.23.10
 
-
 require (
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/stretchr/testify v1.8.4
