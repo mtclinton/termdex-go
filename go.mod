@@ -1,6 +1,6 @@
 module termdex-go
 
-go 1.23.10
+go 1.23
 
 require (
 	github.com/gizak/termui/v3 v3.1.0
