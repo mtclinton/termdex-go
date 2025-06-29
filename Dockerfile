@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:alpine AS builder
 
 WORKDIR /pokedex
 
@@ -10,15 +10,15 @@ COPY * .
 RUN go mod download
 
 # Build
-RUN CGO_ENABLED=1 GOOS=linux go build -o /termdex-go -a -ldflags '-linkmode external -extldflags "-static"' .
+RUN CGO_ENABLED=1 GOOS=linux go build -o /termdex -a -ldflags '-linkmode external -extldflags "-static"' .
 
 FROM debian:buster-slim
 COPY sprites/ /sprites
-COPY --from=builder /termdex-go /termdex-go
+COPY --from=builder /termdex /termdex
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 
 #ENTRYPOINT ["/termdex-go"]
-RUN chmod +x /termdex-go
+RUN chmod +x /termdex
 # Run
-CMD ["/termdex-go"]
+CMD ["/termdex"]
