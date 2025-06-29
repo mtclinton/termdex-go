@@ -22,4 +22,3 @@ go.work
 dist/
 vendor/
 *.db
-termdex-go

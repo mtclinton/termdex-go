@@ -1,4 +1,4 @@
-package main
+package termdex
 
 import (
 	"errors"
@@ -18,7 +18,7 @@ type PokeDB struct {
 	db *gorm.DB
 }
 
-func loadDB(db_name string) (*PokeDB, error) {
+func LoadDB(db_name string) (*PokeDB, error) {
 	if _, err := os.Stat(db_name); err != nil {
 		log.Println("Creating sqlite database")
 		file, err := os.Create(db_name) // Create SQLite file
@@ -108,7 +108,7 @@ func (pkd *PokeDB) createTable() {
 	log.Println("Type name table created")
 }
 
-func (pkd PokeDB) getPokemon(search string) (NewPokemon, []string) {
+func (pkd PokeDB) GetPokemon(search string) (NewPokemon, []string) {
 	var pokemon NewPokemon
 	var pokemon_types []PokemonType
 	var type_names []TypeName
@@ -145,7 +145,7 @@ func (pkd PokeDB) getPokemon(search string) (NewPokemon, []string) {
 	return pokemon, names
 }
 
-func (pkd *PokeDB) getMaxStats() MaxStats {
+func (pkd *PokeDB) GetMaxStats() MaxStats {
 	var maxStats MaxStats
 	result := pkd.db.First(&maxStats)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -155,7 +155,7 @@ func (pkd *PokeDB) getMaxStats() MaxStats {
 
 }
 
-func (pkd *PokeDB) initializePokemon() {
+func (pkd *PokeDB) InitializePokemon() {
 	pkd.createTable()
 	var count int64
 	pkd.db.Table("pokemon").Count(&count)
@@ -167,7 +167,7 @@ func (pkd *PokeDB) initializePokemon() {
 
 }
 
-func (pkd *PokeDB) insertPokemon(pokemon_results []NewPokemon) {
+func (pkd *PokeDB) InsertPokemon(pokemon_results []NewPokemon) {
 
 	notfound := NewPokemon{
 		Pokemon_id: 0,
@@ -181,21 +181,21 @@ func (pkd *PokeDB) insertPokemon(pokemon_results []NewPokemon) {
 	}
 }
 
-func (pkd *PokeDB) insertMaxStats(max_stats MaxStats) {
+func (pkd *PokeDB) InsertMaxStats(max_stats MaxStats) {
 	result := pkd.db.Create(&max_stats)
 	if result.Error != nil {
 		log.Print(result.Error)
 	}
 }
 
-func (pkd *PokeDB) insertTypeName(type_names []TypeName) {
+func (pkd *PokeDB) InsertTypeName(type_names []TypeName) {
 	result := pkd.db.Create(&type_names)
 	if result.Error != nil {
 		log.Print(result.Error)
 	}
 }
 
-func (pkd *PokeDB) insertPokeType(type_poke_tracker []TypePokeTracker) {
+func (pkd *PokeDB) InsertPokeType(type_poke_tracker []TypePokeTracker) {
 	var type_names []TypeName
 	type_name_results := pkd.db.Find(&type_names)
 	if type_name_results.Error != nil {
