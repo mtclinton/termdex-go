@@ -1,4 +1,4 @@
-package main
+package termdex
 
 import (
 	"github.com/stretchr/testify/assert"

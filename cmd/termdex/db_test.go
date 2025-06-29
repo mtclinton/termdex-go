@@ -1,4 +1,4 @@
-package termdex-go
+package termdex
 
 import (
 	"errors"

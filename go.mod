@@ -1,4 +1,4 @@
-module termdex-go
+module termdex
 
 go 1.23.10
 

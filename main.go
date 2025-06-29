@@ -13,6 +13,8 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"termdex/cmd/termdex"
 )
 
 const values = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -70,13 +72,13 @@ func main() {
 	ui.Theme.Block.Border = ui.NewStyle(ui.Color(ui.ColorRed))
 	ui.Theme.Block.Title = ui.NewStyle(ui.Color(ui.ColorRed))
 	defer ui.Close()
-	pokemon_db, _ := loadDB("pokemon.db")
-	pokemon_db.initializePokemon()
+	pokemon_db, _ := termdex.LoadDB("pokemon.db")
+	pokemon_db.InitializePokemon()
 
 	var termPokemon SearchPokemon
-	currentPokemon, types := pokemon_db.getPokemon("25")
+	currentPokemon, types := pokemon_db.GetPokemon("25")
 
-	maxStats := pokemon_db.getMaxStats()
+	maxStats := pokemon_db.GetMaxStats()
 
 	termWidth, termHeight := ui.TerminalDimensions()
 
@@ -238,7 +240,7 @@ func main() {
 			}
 
 		case "<Enter>":
-			currentPokemon, types = pokemon_db.getPokemon(termPokemon.search)
+			currentPokemon, types = pokemon_db.GetPokemon(termPokemon.search)
 			termPokemon.search = ""
 			drawInput()
 			draw()

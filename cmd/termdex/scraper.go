@@ -1,4 +1,4 @@
-package main
+package termdex
 
 import (
 	"log"
@@ -216,10 +216,10 @@ func (s *Scraper) run() {
 	}
 
 	s.wg.Wait()
-	s.pokemon_db.insertPokemon(s.pokemon_data)
-	s.pokemon_db.insertMaxStats(s.maxstats)
-	s.pokemon_db.insertTypeName(s.type_names)
-	s.pokemon_db.insertPokeType(s.tpt)
+	s.pokemon_db.InsertPokemon(s.pokemon_data)
+	s.pokemon_db.InsertMaxStats(s.maxstats)
+	s.pokemon_db.InsertTypeName(s.type_names)
+	s.pokemon_db.InsertPokeType(s.tpt)
 
 }
 
